@@ -15,3 +15,7 @@ enum class AppTheme {
 enum class UsageFeature {
     PFM, INCOGNITO, CHARGE_PHONE, PHOTO_TRANSFER, BACKUP, LOGOFF, INDIVIDUALIZE_DASHBOARD
 }
+
+enum class AccountSorting {
+    ACCOUNTHOLDER, ACCOUNTTYPE
+}
