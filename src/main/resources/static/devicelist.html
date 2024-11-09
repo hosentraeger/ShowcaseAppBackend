@@ -24,6 +24,40 @@
             <div class="overlayContent" style = "background-color: white; padding: 20px; margin: 50px auto; width: 400px; max-height: 90%; overflow-y: auto; border-radius: 8px;">
                 <h2>Gerätedetails</h2>
                 <div id="details"></div>
+
+                <style>
+                    .full-width {
+                        width: 100%;
+                         box-sizing: border-box;
+                    }
+                </style>
+                <table style="width: 100%;">
+                    <tr>
+                        <td>
+                            <label for="detailsDeviceId">Device-ID:</label>
+                        </td>
+                        <td>
+                            <input type="text" id="detailsDeviceId" name="DeviceId" class="full-width" value="">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <label for="detailsFcmToken">FCM Token:</label>
+                        </td>
+                    <tr>
+                        <td colspan="2">
+                            <textarea id="detailsFcmToken" name="detailsFcmToken" rows="5" class="full-width"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="detailsAppId">App-ID</label>
+                        </td>
+                        <td>
+                            <input type="text" id="detailsAppId" name="AppId" class="full-width" value="">
+                        </td>
+                    </tr>
+                </table>
                 <button onclick="openPushForm()">Pushnachricht senden</button>
                 <button onclick="viewDetails()">Mehr Details</button>
                 <button onclick="setFeatures()">Features festlegen</button>
@@ -171,11 +205,11 @@
 
                     $('#detailsOverlay').css('display', 'block'); // Overlay anzeigen
 
-                    $('#details').html(`
-                        <p><strong>Device-Id:</strong> ${currentDeviceId}</p>
-                        <p><strong>FCM Token:</strong> ${currentFcmToken}</p>
-                        <p><strong>App-Id:</strong> ${currentAppId}</p>
-                    `);
+                    // Set the value of the textarea
+                    $('#detailsFcmToken').val(currentFcmToken);
+                    // Set the value of the text
+                    $('#detailsDeviceId').val(currentDeviceId);
+                    $('#detailsAppId').val(currentAppId);
                 });
 
                 // Event-Listener für Struktur-Select
