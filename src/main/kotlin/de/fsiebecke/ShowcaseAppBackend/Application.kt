@@ -21,7 +21,7 @@ fun Application.module() {
 
     // Statische Dateien bereitstellen
     routing {
-        staticFiles("/static", File("src/main/resources/static"))
+        staticResources("/static", "static")
 
         // Wenn der Benutzer die Hauptseite besucht
         get("/devicelist") {

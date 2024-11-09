@@ -1,112 +1,352 @@
 <!DOCTYPE html>
 <html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Datenanzeige</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
-        body { font-family: Arial, sans-serif; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        tr:hover { background-color: #f5f5f5; cursor: pointer; }
-        #detailsOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); }
-        #detailsContent { background-color: white; margin: 15% auto; padding: 20px; width: 80%; }
-        .close { cursor: pointer; color: red; float: right; }
-    </style>
-</head>
-<body>
-<h1>Showcase-App Installationen</h1>
-<table id="deviceTable">
-    <thead>
-    <tr>
-        <th>Anmeldename</th>
-        <th>Letzter Login</th>
-    </tr>
-    </thead>
-    <tbody id="deviceList"></tbody>
-</table>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Datenanzeige</title>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <link rel="stylesheet" href="/static/styles.css" type="text/css">
+    </head>
+    <body>
+        <h1>Showcase-App Installationen</h1>
+        <table id="deviceTable">
+            <thead>
+            <tr>
+                <th>Anmeldename</th>
+                <th>Letzter Login</th>
+            </tr>
+            </thead>
+            <tbody id="deviceList"></tbody>
+        </table>
 
-<div id="detailsOverlay">
-    <div id="detailsContent">
-        <span class="close" onclick="$('#detailsOverlay').hide();">&times;</span>
-        <h2>Details</h2>
-        <div id="details"></div>
-    </div>
-</div>
+        <!-- Details Overlay -->
+        <div id="detailsOverlay" style = "display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); overflow: auto;">
+            <div class="overlayContent" style = "background-color: white; padding: 20px; margin: 50px auto; width: 400px; max-height: 90%; overflow-y: auto; border-radius: 8px;">
+                <h2>Gerätedetails</h2>
+                <div id="details"></div>
+                <button onclick="openPushForm()">Pushnachricht senden</button>
+                <button onclick="viewDetails()">Mehr Details</button>
+                <button onclick="setFeatures()">Features festlegen</button>
+                <button onclick="deleteDevice()">Gerät löschen</button>
+                <button type="button" aria-label="Abbrechen" onclick="$('#detailsOverlay').hide();">Abbrechen</button>
+            </div>
+        </div>
 
-<script>
-    $(document).ready(function() {
-        // Funktion zum Laden der Benutzerdaten
-        function loadDevices() {
-            $.ajax({
-                url: '/deviceData',
-                method: 'GET',
-                success: function(data) {
-                    let deviceList = '';
-                    data.forEach(device => {
-                        deviceList += `<tr data-id="${device.deviceId}">
-                                        <td>${device.userName}</td>
-                                        <td>${device.userDateTimeLastLogin}</td>
-                                    </tr>`;
+        <!-- Push Form Overlay -->
+        <div id="pushFormOverlay" style = "display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); overflow: auto;">
+            <div class="overlayContent" style = "background-color: white; padding: 20px; margin: 50px auto; width: 400px; max-height: 90%; overflow-y: auto; border-radius: 8px;">
+                <h2>Push-Benachrichtigung</h2>
+                <table>
+                    <tr>
+                        <td><label htmlFor="blz">BLZ:</label></td>
+                        <td><input type="text" name="blz" value="94059421" style="margin: 10px; width: calc(100% - 20px);" /></td>
+                    </tr>
+                    <tr>
+                        <td><label htmlFor="obv">OBV:</label></td>
+                        <td><input type="text" name="obv" value="royb" style="margin: 10px; width: calc(100% - 20px);" /></td>
+                    </tr>
+                    <tr>
+                        <td><label htmlFor="title">Titel:</label></td>
+                        <td><input type="text" name="title" placeholder="Title" style="margin: 10px; width: calc(100% - 20px);" /></td>
+                    </tr>
+                    <tr>
+                        <td><label htmlFor="body">Nachricht:</label></td>
+                        <td><input type="text" name="body" placeholder="Body" style="margin: 10px; width: calc(100% - 20px);" /></td>
+                    </tr>
+                    <tr>
+                        <td><label htmlFor="payloadAsNotification">als Android-Benachrichtigung:</label></td>
+                        <td><input type="checkbox" name="payloadAsNotification" /></td>
+                    </tr>
+                    <tr>
+                        <td><p></p></td>
+                        <td>
+                            <button type="button" style="margin: 10px; width: calc(100% - 20px);" onclick="console.log('Zufällige Ansprache button clicked'); randomizeMessage();">
+                                Zufällige Ansprache
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+                <form id="pushForm" onsubmit="return sendPushNotification();">
+                    <label>Struktur:</label>
+                    <select id="structure" name="structure">
+                        <option value="">Bitte wählen...</option>
+                        <option value="IAM">IAM</option>
+                        <option value="WEBVIEW">WEBVIEW</option>
+                        <option value="MAILBOX">MAILBOX</option>
+                        <option value="PING">PING</option>
+                        <option value="UPDATE">UPDATE</option>
+                        <option value="BALANCE">BALANCE</option>
+                    </select><br>
+
+                    <!-- IAM spezifische Felder -->
+                    <div id="IAMFields" class="hidden">
+                        <table>
+                            <tr>
+                                <td><label>Content ID:</label></td>
+                                <td>
+                                    <select id="contentIdSelect" name="contentIdSelect">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label>Benachrichtigungsgrafik:</label></td>
+                                <td>
+                                    <select name="notificationImageSelect">
+                                        <option value="0">keine Grafik</option>
+                                        <option value="1">Übersichtsbanner</option>
+                                        <option value="2">Erfolgsbanner</option>
+                                        <option value="3">Störer</option>
+                                        <option value="4">Logout-Seite</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label>Overlaygrafik:</label></td>
+                                <td>
+                                    <select name="notificationImageSelect">
+                                        <option value="0">keine Grafik</option>
+                                        <option value="3">Störer</option>
+                                        <option value="4">Logout-Seite</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label htmlFor="expectFeedbackIfDisplayed">RC nach push-Eingang:</label></td>
+                                <td><input type="checkbox" name="expectFeedbackIfDisplayed" /></td>
+                            </tr>
+                            <tr>
+                                <td><label htmlFor="expectFeedbackIfHit">RC nach push-Tap:</label></td>
+                                <td><input type="checkbox" name="expectFeedbackIfHit" /></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- WEBVIEW spezifische Felder -->
+                    <div id="WEBVIEWFields" class="hidden">
+                        <table>
+                            <tr>
+                                <td><label>Funktion/Pfad:</label></td>
+                                <td>
+                                    <select id="webviewUrlSelect" name="webviewUrlSelect">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr id="individualWebviewRow" class="hidden">
+                                <td><label>Individueller Pfad:</label></td>
+                                <td><input type="text" name="individualWebviewPath" style="width: 100%;"></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- MAILBOX spezifische Felder -->
+                    <div id="MAILBOXFields" class="hidden">
+                        <table>
+                            <tr>
+                                <td><label>Mail Count:</label></td>
+                                <td><input type="text" name="mailboxUnreadCount" style="width: 100%;"></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- PING hat keine Felder -->
+                    <div id="PINGFields" class="hidden">
+                        <p>No fields for PING</p>
+                    </div>
+
+                    <!-- UPDATE spezifische Felder -->
+                    <div id="UPDATEFields" class="hidden">
+                        <table>
+                            <tr>
+                                <td><label>Version:</label></td>
+                                <td><input type="text" name="updateVersionFrom" style="width: 100%;"></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- BALANCE spezifische Felder -->
+                    <div id="BALANCEFields" class="hidden">
+                        <table>
+                            <tr>
+                                <td><label>IBAN:</label></td>
+                                <td><input type="text" name="balanceIban" style="width: 100%;"></td>
+                            </tr>
+                            <tr>
+                                <td><label>Balance:</label></td>
+                                <td><input type="text" name="balanceValue" style="width: 100%;"></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <button type="submit">Senden</button>
+                    <button type="button" onclick="$('#pushFormOverlay').hide();">Abbrechen</button>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            $(document).ready(function() {
+                // Deine Map in JavaScript, um die Optionen zu füllen
+                const contentIds = {
+                    "KampagneA-sfMNI": "9508697563",
+                    "KampagneA-IronManp": "9493366586",
+                    "KampagneA-fsiexp": "7561469993",
+                    "KampagneB-BruceW": "1983068231",
+                    "KampagneB-AnneW": "4805970215",
+                    "KampagneB-SBroDepotPlus1": "2077139071",
+                    "KampagneC-larsv": "6122688630",
+                    "KampagneC-royb": "4015714997",
+                    "KampagneC-carstenb": "8612016758",
+                    "KampagneC-DFpush": "5841929766",
+                    "KampagneD-S_Broker1SF": "5695324742",
+                    "KampagneD-LasttestPeKo": "7006280225",
+                    "KampagneD-LasttestBuKo": "2943700695"
+                };
+
+                const webviewUrls = {
+                    "Card Control" : "https://m164an08-421.if-etaps.de/de/home/service/card-control.webview.html?IF_SILENT_LOGIN=true&n=true&wstart=true",
+                    "Merkzettel" : "https://m164an08-421.if-etaps.de/de/home/onlinebanking/service/meine-aktivitaeten.webview.html?IF_SILENT_LOGIN=true&n=true&wstart=true",
+                    "Service Center" : "https://m164an08-421.if-etaps.de/de/home/service.webview.html?IF_SILENT_LOGIN=true&n=true&wstart=true",
+                    "Limiterhöhung" : "https://m164an08-421.if-etaps.de/de/home/onlinebanking/service/limitaenderung_neo_app.webview.html?IF_SILENT_LOGIN=true&n=true&wstart=true",
+                    "Finanzplaner" : "https://m164an08-421.if-etaps.de/de/home/onlinebanking/nbf/finanzplaner/dashboard.webview.html?IF_SILENT_LOGIN=true&n=true&wstart=true",
+                    "Click2Credit" : "https://m164an08-421.if-etaps.de/de/home/privatkunden/kredite-und-finanzierungen/zwei-klick-kredit.webview.html?IF_SILENT_LOGIN=true&n=true&wstart=true",
+                    "Individuelle Angebote" : "https://m164an08-421.if-etaps.de/de/home/privatkunden/aktuelle-angebote.webview.html?IF_SILENT_LOGIN=true&n=true&wstart=true",
+                    "<neo-Workflow>" : "<neo>",
+                    "<individueller Pfad>" : "<path>"
+                };
+
+
+                // Optionen zur Select-Liste hinzufügen
+                $.each(contentIds, function(key, value) {
+                    $('#contentIdSelect').append($('<option></option>').attr('value', value).text(key));
+                });
+
+                // Optionen zur Select-Liste hinzufügen
+                $.each(webviewUrls, function(key, value) {
+                    $('#webviewUrlSelect').append($('<option></option>').attr('value', value).text(key));
+                });
+
+                function loadDevices() {
+                    $.ajax({
+                        url: '/deviceData',
+                        method: 'GET',
+                        success: function(data) {
+                            let deviceList = '';
+                            data.forEach(device => {
+                                deviceList += `<tr data-id="${device.deviceId}" data-fcm="${device.userFcmToken}" data-app="${device.appId}">
+                                                <td>${device.userName}</td>
+                                                <td>${device.userDateTimeLastLogin}</td>
+                                            </tr>`;
+                            });
+                            $('#deviceList').html(deviceList);
+                        },
+                        error: function() {
+                            $('#deviceList').html('<tr><td colspan="3">Fehler beim Laden der Gerätedaten.</td></tr>');
+                        }
                     });
-                    $('#deviceList').html(deviceList);
-                },
-                error: function() {
-                    $('#deviceList').html('<tr><td colspan="3">Fehler beim Laden der Gerätedaten.</td></tr>');
                 }
-            });
-        }
 
-        // Ereignis beim Klicken auf eine Zeile
-        $(document).on('click', '#deviceList tr', function() {
-            const deviceId = $(this).data('id');
-            $.ajax({
-                url: `/devices/${deviceId}`, // Route zum Abrufen der Gerätedetails
-                method: 'GET',
-                success: function(details) {
+                $(document).on('click', '#deviceList tr', function() {
+                    const deviceId = $(this).data('id');
+                    const fcmToken = $(this).data('fcm');
+                    const appId = $(this).data('app');
+                    $('#detailsOverlay').css('display', 'block'); // Overlay anzeigen
+
                     $('#details').html(`
-                        <p><strong>Device ID:</strong> ${details.deviceId}</p>
-                        <p><strong>Push ID:</strong> ${details.userFcmToken}</p>
-                        <p><strong>App ID:</strong> ${details.appId}</p>
-                        <button onclick="sendPush('${details.userFcmToken}')">Pushnachricht senden</button>
-                        <button onclick="sendPush('${details.userFcmToken}')">Mehr Details</button>
-                        <button onclick="sendPush('${details.userFcmToken}')">Features</button>
-                        <button onclick="deleteDevice('${deviceId}')">Delete</button>
+                        <p><strong>Device ID:</strong> ${deviceId}</p>
+                        <p><strong>Push ID:</strong> ${fcmToken}</p>
+                        <p><strong>App ID:</strong> ${appId}</p>
                     `);
-                    $('#detailsOverlay').show();
-                },
-                error: function() {
-                    $('#details').html('<p>Fehler beim Laden der Details.</p>');
-                }
+                });
+
+                loadDevices();
+
+                // Event-Listener für Struktur-Select
+                $('#structure').change(function() {
+                    const selectedStructure = $(this).val();
+
+                    // Alle spezifischen Felder verbergen
+                    const fieldIds = ['IAMFields', 'WEBVIEWFields', 'MAILBOXFields', 'PINGFields', 'UPDATEFields', 'BALANCEFields'];
+                    fieldIds.forEach(id => {
+                        $('#' + id).hide();
+                    });
+
+                    // Die Felder für die ausgewählte Struktur anzeigen
+                    if (selectedStructure) {
+                        $('#' + selectedStructure + 'Fields').show();
+                    }
+                });
+
+                const webviewUrlSelect = document.getElementById("webviewUrlSelect");
+                const individualWebviewRow = document.getElementById("individualWebviewRow");
+
+                // Event-Listener für Webview-Select
+                $('#webviewUrlSelect').change(function() {
+                    const selectedWebviewUrl = $(this).val();
+
+                    if(selectedWebviewUrl === "<neo>" || selectedWebviewUrl === "<path>" ) {
+                        $('#individualWebviewRow').removeClass('hidden'); // Zeige das zusätzliche Eingabefeld an
+                    } else {
+                        $('#individualWebviewRow').addClass('hidden'); // Verstecke das Eingabefeld
+                    }
+                });
             });
-        });
 
-        // Benutzer beim Laden der Seite abrufen
-        loadDevices();
-    });
+            function openPushForm() {
+                $('#device_id').val($('#details').find('p:contains("Device ID")').text().split(': ')[1]);
+                $('#push_id').val($('#details').find('p:contains("Push ID")').text().split(': ')[1]);
+                $('#pushFormOverlay').show();
+            }
 
-    function sendPush(fcmToken) {
-        // Funktion zum Senden der Push-Benachrichtigung
-        alert(`Push-Nachricht an ${fcmToken} gesendet!`);
-    }
+            function sendPushNotification() {
+                const data = {
+                    device_id: $('#device_id').val(),
+                    push_id: $('#push_id').val(),
+                    title: $('#title').val(),
+                    body: $('#body').val(),
+                    structure: $('#structure').val(),
+                    additionalData: $('#additionalData').val()
+                };
 
-    function deleteDevice(deviceId) {
-        // Funktion zum Löschen eines Geräts
-        if (confirm('Möchten Sie dieses Gerät wirklich löschen?')) {
-            $.ajax({
-                url: `/devices/${deviceId}`,
-                method: 'DELETE',
-                success: function() {
-                    alert('Device gelöscht!');
-                    location.reload(); // Seite neu laden
-                },
-                error: function() {
-                    alert('Fehler beim Löschen des Devices.');
+                $.ajax({
+                    url: '/sendPushNotification',
+                    method: 'POST',
+                    data: JSON.stringify(data),
+                    contentType: 'application/json',
+                    success: function() {
+                        alert('Push-Benachrichtigung gesendet!');
+                        $('#pushFormOverlay').hide();
+                    },
+                    error: function() {
+                        alert('Fehler beim Senden der Push-Benachrichtigung.');
+                    }
+                });
+            }
+
+            function viewDetails() {
+                alert("Zeige weitere Details");
+            }
+
+            function setFeatures() {
+                alert("Features festlegen");
+            }
+
+            function deleteDevice() {
+                if (confirm('Möchten Sie dieses Gerät wirklich löschen?')) {
+                    alert('Gerät wurde gelöscht');
                 }
-            });
-        }
-    }
-</script>
-</body>
+            }
+
+            function randomizeMessage() {
+                const randomTitles = ["Willkommen", "Wichtige Nachricht", "Update verfügbar"];
+                const randomBodies = ["Bitte überprüfen Sie die neuesten Informationen.", "Neues Update für Ihre App!", "Ihr Konto benötigt Aufmerksamkeit."];
+
+                const randomTitle = randomTitles[Math.floor(Math.random() * randomTitles.length)];
+                const randomBody = randomBodies[Math.floor(Math.random() * randomBodies.length)];
+
+                // Setze die Felder im Formular
+                $("input[name='title']").val(randomTitle);
+                $("input[name='body']").val(randomBody);
+         }
+        </script>
+    </body>
 </html>
