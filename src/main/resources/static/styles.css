@@ -76,3 +76,12 @@ button:focus {
         width: 95%; /* Overlay-Breite für kleine Bildschirme */
     }
 }
+
+.iamTypeClass.hidden,
+.webviewTypeClass.hidden,
+.mailboxTypeClass.hidden,
+.pingTypeClass.hidden,
+.updateTypeClass.hidden,
+.balanceTypeClass.hidden {
+    display: none;
+}

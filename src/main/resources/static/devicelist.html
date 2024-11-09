@@ -36,147 +36,123 @@
         <div id="pushFormOverlay" style = "display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); overflow: auto;">
             <div class="overlayContent" style = "background-color: white; padding: 20px; margin: 50px auto; width: 400px; max-height: 90%; overflow-y: auto; border-radius: 8px;">
                 <h2>Push-Benachrichtigung</h2>
-                <table>
-                    <tr>
-                        <td><label htmlFor="blz">BLZ:</label></td>
-                        <td><input type="text" name="blz" value="94059421" style="margin: 10px; width: calc(100% - 20px);" /></td>
-                    </tr>
-                    <tr>
-                        <td><label htmlFor="obv">OBV:</label></td>
-                        <td><input type="text" name="obv" value="royb" style="margin: 10px; width: calc(100% - 20px);" /></td>
-                    </tr>
-                    <tr>
-                        <td><label htmlFor="title">Titel:</label></td>
-                        <td><input type="text" name="title" placeholder="Title" style="margin: 10px; width: calc(100% - 20px);" /></td>
-                    </tr>
-                    <tr>
-                        <td><label htmlFor="body">Nachricht:</label></td>
-                        <td><input type="text" name="body" placeholder="Body" style="margin: 10px; width: calc(100% - 20px);" /></td>
-                    </tr>
-                    <tr>
-                        <td><label htmlFor="payloadAsNotification">als Android-Benachrichtigung:</label></td>
-                        <td><input type="checkbox" name="payloadAsNotification" /></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td>
-                            <button type="button" style="margin: 10px; width: calc(100% - 20px);" onclick="console.log('Zufällige Ansprache button clicked'); randomizeMessage();">
-                                Zufällige Ansprache
-                            </button>
-                        </td>
-                    </tr>
-                </table>
                 <form id="pushForm" onsubmit="return sendPushNotification();">
-                    <label>Struktur:</label>
-                    <select id="structure" name="structure">
-                        <option value="">Bitte wählen...</option>
-                        <option value="IAM">IAM</option>
-                        <option value="WEBVIEW">WEBVIEW</option>
-                        <option value="MAILBOX">MAILBOX</option>
-                        <option value="PING">PING</option>
-                        <option value="UPDATE">UPDATE</option>
-                        <option value="BALANCE">BALANCE</option>
-                    </select><br>
-
-                    <!-- IAM spezifische Felder -->
-                    <div id="IAMFields" class="hidden">
-                        <table>
-                            <tr>
-                                <td><label>Content ID:</label></td>
-                                <td>
-                                    <select id="contentIdSelect" name="contentIdSelect">
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><label>Benachrichtigungsgrafik:</label></td>
-                                <td>
-                                    <select name="notificationImageSelect">
-                                        <option value="0">keine Grafik</option>
-                                        <option value="1">Übersichtsbanner</option>
-                                        <option value="2">Erfolgsbanner</option>
-                                        <option value="3">Störer</option>
-                                        <option value="4">Logout-Seite</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><label>Overlaygrafik:</label></td>
-                                <td>
-                                    <select name="notificationImageSelect">
-                                        <option value="0">keine Grafik</option>
-                                        <option value="3">Störer</option>
-                                        <option value="4">Logout-Seite</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><label htmlFor="expectFeedbackIfDisplayed">RC nach push-Eingang:</label></td>
-                                <td><input type="checkbox" name="expectFeedbackIfDisplayed" /></td>
-                            </tr>
-                            <tr>
-                                <td><label htmlFor="expectFeedbackIfHit">RC nach push-Tap:</label></td>
-                                <td><input type="checkbox" name="expectFeedbackIfHit" /></td>
-                            </tr>
-                        </table>
-                    </div>
-
-                    <!-- WEBVIEW spezifische Felder -->
-                    <div id="WEBVIEWFields" class="hidden">
-                        <table>
-                            <tr>
-                                <td><label>Funktion/Pfad:</label></td>
-                                <td>
-                                    <select id="webviewUrlSelect" name="webviewUrlSelect">
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr id="individualWebviewRow" class="hidden">
-                                <td><label>Individueller Pfad:</label></td>
-                                <td><input type="text" name="individualWebviewPath" style="width: 100%;"></td>
-                            </tr>
-                        </table>
-                    </div>
-
-                    <!-- MAILBOX spezifische Felder -->
-                    <div id="MAILBOXFields" class="hidden">
-                        <table>
-                            <tr>
-                                <td><label>Mail Count:</label></td>
-                                <td><input type="text" name="mailboxUnreadCount" style="width: 100%;"></td>
-                            </tr>
-                        </table>
-                    </div>
-
-                    <!-- PING hat keine Felder -->
-                    <div id="PINGFields" class="hidden">
-                        <p>No fields for PING</p>
-                    </div>
-
-                    <!-- UPDATE spezifische Felder -->
-                    <div id="UPDATEFields" class="hidden">
-                        <table>
-                            <tr>
-                                <td><label>Version:</label></td>
-                                <td><input type="text" name="updateVersionFrom" style="width: 100%;"></td>
-                            </tr>
-                        </table>
-                    </div>
-
-                    <!-- BALANCE spezifische Felder -->
-                    <div id="BALANCEFields" class="hidden">
-                        <table>
-                            <tr>
-                                <td><label>IBAN:</label></td>
-                                <td><input type="text" name="balanceIban" style="width: 100%;"></td>
-                            </tr>
-                            <tr>
-                                <td><label>Balance:</label></td>
-                                <td><input type="text" name="balanceValue" style="width: 100%;"></td>
-                            </tr>
-                        </table>
-                    </div>
-
+                    <input type="hidden" id="pushFormDeviceId" name="pushFormDeviceId" value="">
+                    <input type="hidden" id="pushFormFcmToken" name="pushFormFcmToken" value="">
+                    <table>
+                        <tr>
+                            <td><label for="pushFormBlz">BLZ:</label></td>
+                            <td><input type="text" id="pushFormBlz" name="pushFormBlz" value="94059421" /></td>
+                        </tr>
+                        <tr>
+                            <td><label for="pushFormObv">OBV:</label></td>
+                            <td><input type="text" id="pushFormObv" name="pushFormObv" value="" /></td>
+                        </tr>
+                        <tr>
+                            <td><label for="pushFormTitle">Titel:</label></td>
+                            <td><input type="text" id="pushFormTitle" name="pushFormTitle" placeholder="Title" /></td>
+                        </tr>
+                        <tr>
+                            <td><label for="pushFormBody">Nachricht:</label></td>
+                            <td><input type="text" id="pushFormBody" name="pushFormBody" placeholder="Body" /></td>
+                        </tr>
+                        <tr>
+                            <td><p></p></td>
+                            <td>
+                                <button type="button" onclick="console.log('Zufällige Ansprache button clicked'); randomizeMessage();">
+                                    Zufällige Ansprache
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><label for="pushFormPayloadAsNotification">als Android-Benachrichtigung:</label></td>
+                            <td><input type="checkbox" id="pushFormPayloadAsNotification" name="pushFormPayloadAsNotification" /></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label>Nachrichtentyp:</label>
+                            </td>
+                            <td>
+                                <select id="structure" name="structure">
+                                    <option value="">Wähle den Nachrichtentyp:</option>
+                                    <option value="IAM">IAM</option>
+                                    <option value="WEBVIEW">WEBVIEW</option>
+                                    <option value="MAILBOX">MAILBOX</option>
+                                    <option value="PING">PING</option>
+                                    <option value="UPDATE">UPDATE</option>
+                                    <option value="BALANCE">BALANCE</option>
+                                </select><br>
+                            </td>
+                        </tr>
+                        <tr class="iamTypeClass">
+                            <td><label>Content ID:</label></td>
+                            <td>
+                                <select id="contentIdSelect" name="contentIdSelect">
+                                </select>
+                            </td>
+                        </tr>
+                        <tr class="iamTypeClass">
+                            <td><label>Benachrichtigungsgrafik:</label></td>
+                            <td>
+                                <select name="notificationImageSelect">
+                                    <option value="0">keine Grafik</option>
+                                    <option value="1">Übersichtsbanner</option>
+                                    <option value="2">Erfolgsbanner</option>
+                                    <option value="3">Störer</option>
+                                    <option value="4">Logout-Seite</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr class="iamTypeClass">
+                            <td><label>Overlaygrafik:</label></td>
+                            <td>
+                                <select name="overlayImageSelect">
+                                    <option value="0">keine Grafik</option>
+                                    <option value="3">Störer</option>
+                                    <option value="4">Logout-Seite</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr class="iamTypeClass">
+                            <td><label for="expectFeedbackIfDisplayed">RC nach push-Eingang:</label></td>
+                            <td><input type="checkbox" id="expectFeedbackIfDisplayed" name="expectFeedbackIfDisplayed" /></td>
+                        </tr>
+                        <tr class="iamTypeClass">
+                            <td><label for="expectFeedbackIfHit">RC nach push-Tap:</label></td>
+                            <td><input type="checkbox" id="expectFeedbackIfHit" name="expectFeedbackIfHit" /></td>
+                        </tr>
+                        <tr class="iamTypeClass">
+                            <td><label for="eventId">Event-ID:</label></td>
+                            <td><input type="text" id="eventId" name="eventId" style="width: 100%;"></td>
+                        </tr>
+                        <tr class="webviewTypeClass">
+                            <td><label>Funktion/Pfad:</label></td>
+                            <td>
+                                <select id="webviewUrlSelect" name="webviewUrlSelect">
+                                </select>
+                            </td>
+                        </tr>
+                        <tr id="individualWebviewRow" class="webviewTypeClass">
+                            <td><label>Individueller Pfad:</label></td>
+                            <td><input type="text" name="individualWebviewPath" style="width: 100%;"></td>
+                        </tr>
+                        <tr class="mailboxTypeClass">
+                            <td><label>Mail Count:</label></td>
+                            <td><input type="text" name="mailboxUnreadCount" style="width: 100%;"></td>
+                        </tr>
+                        <tr class="updateTypeClass">
+                            <td><label>Version:</label></td>
+                            <td><input type="text" name="updateVersionFrom" style="width: 100%;"></td>
+                        </tr>
+                        <tr class="balanceTypeClass">
+                            <td><label>IBAN:</label></td>
+                            <td><input type="text" name="balanceIban" style="width: 100%;"></td>
+                        </tr>
+                        <tr class="balanceTypeClass">
+                            <td><label>Balance:</label></td>
+                            <td><input type="text" name="balanceValue" style="width: 100%;"></td>
+                        </tr>
+                    </table>
                     <button type="submit">Senden</button>
                     <button type="button" onclick="$('#pushFormOverlay').hide();">Abbrechen</button>
                 </form>
@@ -184,95 +160,38 @@
         </div>
 
         <script>
+            let currentDeviceId, currentFcmToken, currentAppId;
+
             $(document).ready(function() {
-                // Deine Map in JavaScript, um die Optionen zu füllen
-                const contentIds = {
-                    "KampagneA-sfMNI": "9508697563",
-                    "KampagneA-IronManp": "9493366586",
-                    "KampagneA-fsiexp": "7561469993",
-                    "KampagneB-BruceW": "1983068231",
-                    "KampagneB-AnneW": "4805970215",
-                    "KampagneB-SBroDepotPlus1": "2077139071",
-                    "KampagneC-larsv": "6122688630",
-                    "KampagneC-royb": "4015714997",
-                    "KampagneC-carstenb": "8612016758",
-                    "KampagneC-DFpush": "5841929766",
-                    "KampagneD-S_Broker1SF": "5695324742",
-                    "KampagneD-LasttestPeKo": "7006280225",
-                    "KampagneD-LasttestBuKo": "2943700695"
-                };
-
-                const webviewUrls = {
-                    "Card Control" : "https://m164an08-421.if-etaps.de/de/home/service/card-control.webview.html?IF_SILENT_LOGIN=true&n=true&wstart=true",
-                    "Merkzettel" : "https://m164an08-421.if-etaps.de/de/home/onlinebanking/service/meine-aktivitaeten.webview.html?IF_SILENT_LOGIN=true&n=true&wstart=true",
-                    "Service Center" : "https://m164an08-421.if-etaps.de/de/home/service.webview.html?IF_SILENT_LOGIN=true&n=true&wstart=true",
-                    "Limiterhöhung" : "https://m164an08-421.if-etaps.de/de/home/onlinebanking/service/limitaenderung_neo_app.webview.html?IF_SILENT_LOGIN=true&n=true&wstart=true",
-                    "Finanzplaner" : "https://m164an08-421.if-etaps.de/de/home/onlinebanking/nbf/finanzplaner/dashboard.webview.html?IF_SILENT_LOGIN=true&n=true&wstart=true",
-                    "Click2Credit" : "https://m164an08-421.if-etaps.de/de/home/privatkunden/kredite-und-finanzierungen/zwei-klick-kredit.webview.html?IF_SILENT_LOGIN=true&n=true&wstart=true",
-                    "Individuelle Angebote" : "https://m164an08-421.if-etaps.de/de/home/privatkunden/aktuelle-angebote.webview.html?IF_SILENT_LOGIN=true&n=true&wstart=true",
-                    "<neo-Workflow>" : "<neo>",
-                    "<individueller Pfad>" : "<path>"
-                };
-
-
-                // Optionen zur Select-Liste hinzufügen
-                $.each(contentIds, function(key, value) {
-                    $('#contentIdSelect').append($('<option></option>').attr('value', value).text(key));
-                });
-
-                // Optionen zur Select-Liste hinzufügen
-                $.each(webviewUrls, function(key, value) {
-                    $('#webviewUrlSelect').append($('<option></option>').attr('value', value).text(key));
-                });
-
-                function loadDevices() {
-                    $.ajax({
-                        url: '/deviceData',
-                        method: 'GET',
-                        success: function(data) {
-                            let deviceList = '';
-                            data.forEach(device => {
-                                deviceList += `<tr data-id="${device.deviceId}" data-fcm="${device.userFcmToken}" data-app="${device.appId}">
-                                                <td>${device.userName}</td>
-                                                <td>${device.userDateTimeLastLogin}</td>
-                                            </tr>`;
-                            });
-                            $('#deviceList').html(deviceList);
-                        },
-                        error: function() {
-                            $('#deviceList').html('<tr><td colspan="3">Fehler beim Laden der Gerätedaten.</td></tr>');
-                        }
-                    });
-                }
-
+                // Click auf ein Element der Tabelle
                 $(document).on('click', '#deviceList tr', function() {
-                    const deviceId = $(this).data('id');
-                    const fcmToken = $(this).data('fcm');
-                    const appId = $(this).data('app');
+                    currentDeviceId = $(this).data('id');
+                    currentFcmToken = $(this).data('fcm');
+                    currentAppId = $(this).data('app');
+
                     $('#detailsOverlay').css('display', 'block'); // Overlay anzeigen
 
                     $('#details').html(`
-                        <p><strong>Device ID:</strong> ${deviceId}</p>
-                        <p><strong>Push ID:</strong> ${fcmToken}</p>
-                        <p><strong>App ID:</strong> ${appId}</p>
+                        <p><strong>Device-Id:</strong> ${currentDeviceId}</p>
+                        <p><strong>FCM Token:</strong> ${currentFcmToken}</p>
+                        <p><strong>App-Id:</strong> ${currentAppId}</p>
                     `);
                 });
 
-                loadDevices();
-
                 // Event-Listener für Struktur-Select
                 $('#structure').change(function() {
-                    const selectedStructure = $(this).val();
+                    const selectedStructure = $(this).val().toLowerCase();
+                    const classIdPrefixes = ['iam', 'webview', 'mailbox', 'ping', 'update', 'balance'];
 
-                    // Alle spezifischen Felder verbergen
-                    const fieldIds = ['IAMFields', 'WEBVIEWFields', 'MAILBOXFields', 'PINGFields', 'UPDATEFields', 'BALANCEFields'];
-                    fieldIds.forEach(id => {
-                        $('#' + id).hide();
+                    classIdPrefixes.forEach(id => {
+                        const className = `.${id}TypeClass`; // Use dot (.) for classes
+                        const elementsWithClassName = document.querySelectorAll(className);
+                        elementsWithClassName.forEach(element => {
+                            $(element).toggleClass('hidden', selectedStructure !== id); // Use jQuery's toggleClass
+                        });
                     });
-
-                    // Die Felder für die ausgewählte Struktur anzeigen
-                    if (selectedStructure) {
-                        $('#' + selectedStructure + 'Fields').show();
+                    if ( selectedStructure === "webview" ) {
+                        $('#webviewUrlSelect').trigger('change');
                     }
                 });
 
@@ -289,28 +208,109 @@
                         $('#individualWebviewRow').addClass('hidden'); // Verstecke das Eingabefeld
                     }
                 });
+
+                // Optionen zur Select-Liste hinzufügen
+                $.each(contentIds, function(key, value) {
+                    $('#contentIdSelect').append($('<option></option>').attr('value', value).text(key));
+                });
+
+                // Optionen zur Select-Liste hinzufügen
+                $.each(webviewUrls, function(key, value) {
+                    $('#webviewUrlSelect').append($('<option></option>').attr('value', value).text(key));
+                });
+
+                loadDevices();
+
+                $('#structure').trigger('change');
+
             });
 
+            const contentIds = {
+                "KampagneA-sfMNI": "9508697563",
+                "KampagneA-IronManp": "9493366586",
+                "KampagneA-fsiexp": "7561469993",
+                "KampagneB-BruceW": "1983068231",
+                "KampagneB-AnneW": "4805970215",
+                "KampagneB-SBroDepotPlus1": "2077139071",
+                "KampagneC-larsv": "6122688630",
+                "KampagneC-royb": "4015714997",
+                "KampagneC-carstenb": "8612016758",
+                "KampagneC-DFpush": "5841929766",
+                "KampagneD-S_Broker1SF": "5695324742",
+                "KampagneD-LasttestPeKo": "7006280225",
+                "KampagneD-LasttestBuKo": "2943700695"
+            };
+
+            const webviewUrls = {
+                "Card Control" : "https://m164an08-421.if-etaps.de/de/home/service/card-control.webview.html?IF_SILENT_LOGIN=true&n=true&wstart=true",
+                "Merkzettel" : "https://m164an08-421.if-etaps.de/de/home/onlinebanking/service/meine-aktivitaeten.webview.html?IF_SILENT_LOGIN=true&n=true&wstart=true",
+                "Service Center" : "https://m164an08-421.if-etaps.de/de/home/service.webview.html?IF_SILENT_LOGIN=true&n=true&wstart=true",
+                "Limiterhöhung" : "https://m164an08-421.if-etaps.de/de/home/onlinebanking/service/limitaenderung_neo_app.webview.html?IF_SILENT_LOGIN=true&n=true&wstart=true",
+                "Finanzplaner" : "https://m164an08-421.if-etaps.de/de/home/onlinebanking/nbf/finanzplaner/dashboard.webview.html?IF_SILENT_LOGIN=true&n=true&wstart=true",
+                "Click2Credit" : "https://m164an08-421.if-etaps.de/de/home/privatkunden/kredite-und-finanzierungen/zwei-klick-kredit.webview.html?IF_SILENT_LOGIN=true&n=true&wstart=true",
+                "Individuelle Angebote" : "https://m164an08-421.if-etaps.de/de/home/privatkunden/aktuelle-angebote.webview.html?IF_SILENT_LOGIN=true&n=true&wstart=true",
+                "<neo-Workflow>" : "<neo>",
+                "<individueller Pfad>" : "<path>"
+            };
+
+            function loadDevices() {
+                $.ajax({
+                    url: '/deviceData',
+                    method: 'GET',
+                    success: function(data) {
+                        let deviceList = '';
+                        data.forEach(device => {
+                            deviceList += `<tr data-id="${device.deviceId}" data-fcm="${device.userFcmToken}" data-app="${device.appId}">
+                                            <td>${device.userName}</td>
+                                            <td>${device.userDateTimeLastLogin}</td>
+                                        </tr>`;
+                        });
+                        $('#deviceList').html(deviceList);
+                    },
+                    error: function() {
+                        $('#deviceList').html('<tr><td colspan="3">Fehler beim Laden der Gerätedaten.</td></tr>');
+                    }
+                });
+            }
+
             function openPushForm() {
-                $('#device_id').val($('#details').find('p:contains("Device ID")').text().split(': ')[1]);
-                $('#push_id').val($('#details').find('p:contains("Push ID")').text().split(': ')[1]);
+                $('#pushFormDeviceId').val(currentDeviceId);
+                $('#pushFormFcmToken').val(currentFcmToken);
+
+                // Ensure the row is visible before showing the overlay
+                $('#pushFormOverlay').removeClass('hidden');
                 $('#pushFormOverlay').show();
             }
 
             function sendPushNotification() {
-                const data = {
-                    device_id: $('#device_id').val(),
-                    push_id: $('#push_id').val(),
-                    title: $('#title').val(),
-                    body: $('#body').val(),
-                    structure: $('#structure').val(),
-                    additionalData: $('#additionalData').val()
-                };
+                // Erstellen eines leeren Objekts für die Daten
+                let formData = {};
+                formData['deviceId'] = currentDeviceId;
+                formData['fcmToken'] = currentFcmToken;
+                formData['appId'] = currentAppId;
 
+                event.preventDefault();
+
+                const form = document.getElementById('pushForm');
+
+                for (let i = 0; i < form.elements.length; i++) {
+                    const element = form.elements[i];
+                    if (element.type === 'checkbox') {
+                      formData[element.name] = element.checked;
+                    } else if (element.type === 'select-one' || element.type === 'select-multiple') {
+                      formData[element.name] = element.value;
+                    } else if (element.type === 'text' || element.type === 'textarea') {
+                      formData[element.name] = element.value;
+                    }
+                }
+
+                // Konvertiere das JavaScript-Objekt in JSON
+                let jsonData = JSON.stringify(formData);
+                console.log("push form content: ", jsonData)
                 $.ajax({
                     url: '/sendPushNotification',
                     method: 'POST',
-                    data: JSON.stringify(data),
+                    data: jsonData,
                     contentType: 'application/json',
                     success: function() {
                         alert('Push-Benachrichtigung gesendet!');
@@ -344,9 +344,10 @@
                 const randomBody = randomBodies[Math.floor(Math.random() * randomBodies.length)];
 
                 // Setze die Felder im Formular
-                $("input[name='title']").val(randomTitle);
-                $("input[name='body']").val(randomBody);
-         }
+                $("input[name='pushFormTitle']").val(randomTitle);
+                $("input[name='pushFormBody']").val(randomBody);
+             }
+
         </script>
     </body>
 </html>

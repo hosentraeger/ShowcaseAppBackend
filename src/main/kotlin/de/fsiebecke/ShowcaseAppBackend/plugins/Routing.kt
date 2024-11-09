@@ -2,6 +2,7 @@ package de.fsiebecke.ShowcaseAppBackend.plugins
 
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.Dispatchers
@@ -62,6 +63,31 @@ fun Application.configureRouting() {
                 call.respond(HttpStatusCode.OK, "Device deleted successfully.")
             } else {
                 call.respond(HttpStatusCode.NotFound, "Device not found.")
+            }
+        }
+
+        // Empfangen des Formulars und Senden der Push-Benachrichtigung
+        post("/sendPushNotification") {
+            val pushNotificationBuilder = PushNotificationBuilder()
+
+            val pushNotificationData = call.receive<PushNotificationData>()
+
+            // Überprüfe, ob pushId null ist
+            if (pushNotificationData.deviceId.isEmpty()) {
+                call.respond(HttpStatusCode.BadRequest, "Device ID cannot be null")
+                return@post // Beende die Ausführung, falls pushId null ist
+            }
+            if (pushNotificationData.fcmToken.isEmpty()) {
+                call.respond(HttpStatusCode.BadRequest, "FCM Token cannot be null")
+                return@post // Beende die Ausführung, falls pushId null ist
+            }
+            // Push Notification Logik
+            val success = pushNotificationBuilder.sendPushNotification(pushNotificationData)
+
+            if (success) {
+                call.respond(HttpStatusCode.OK, mapOf("status" to "success", "message" to "Push notification sent successfully!"))
+            } else {
+                call.respond(HttpStatusCode.InternalServerError, mapOf("status" to "error", "message" to "Failed to send push notification."))
             }
         }
     }
