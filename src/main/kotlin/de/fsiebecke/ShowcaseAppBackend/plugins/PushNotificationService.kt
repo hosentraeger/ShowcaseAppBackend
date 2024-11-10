@@ -34,8 +34,8 @@ object PushNotificationService {
     private val logger = LoggerFactory.getLogger(PushNotificationService::class.java)
     private var cachedToken: String? = null
     private var tokenExpiry: Instant? = null
-//    private val jwtTokenProvider = JwtTokenProvider("/etc/jwt/pushtoapp-c3caa-dd8457b08124.json")
-    private val jwtTokenProvider = JwtTokenProvider("G:\\Andere Computer\\Mein PC\\devel\\IntelliJ\\ShowcaseAppBackend\\pushtoapp-c3caa-dd8457b08124.json")
+    private val jwtTokenProvider = JwtTokenProvider("/etc/jwt/pushtoapp-c3caa-dd8457b08124.json")
+//    private val jwtTokenProvider = JwtTokenProvider("G:\\Andere Computer\\Mein PC\\devel\\IntelliJ\\ShowcaseAppBackend\\pushtoapp-c3caa-dd8457b08124.json")
     private val httpClient = HttpClient()
 
     // Simulierter Token-Abruf
