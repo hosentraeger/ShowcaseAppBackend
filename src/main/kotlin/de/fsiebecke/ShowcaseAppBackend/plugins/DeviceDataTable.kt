@@ -2,7 +2,6 @@ package de.fsiebecke.ShowcaseAppBackend.plugins
 
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.javatime.datetime
-import org.jetbrains.exposed.sql.statements.Statement
 import org.jetbrains.exposed.sql.statements.InsertStatement
 import org.jetbrains.exposed.sql.statements.UpdateStatement
 import java.time.LocalDateTime
@@ -163,6 +162,91 @@ object DeviceDataTable : Table("device_data") {
 
     fun DeviceDataTable.updateOrInsert(deviceData: DeviceDataModel): Int {
         val updatedRows = update({ deviceId eq deviceData.deviceId }) {
+            it.fromDeviceData(deviceData) // für UpdateStatement
+        }
+
+        return if (updatedRows > 0) {
+            updatedRows // Rückgabe der Anzahl der aktualisierten Zeilen
+        } else {
+            insert {
+                it.fromDeviceData(deviceData) // für InsertStatement
+            }
+            1 // Rückgabe von 1, um anzuzeigen, dass ein Eintrag eingefügt wurde
+        }
+    }
+
+    private fun InsertStatement<*>.fromDeviceData(deviceData: DeviceData) {
+        this[deviceId] = deviceData.deviceMetaData!!.deviceId
+        this[systemSfStage] = SfStage.BETA
+        this[systemMkaStage] = MkaStage.ABN
+        this[systemMkaLine] = 0
+        this[appVersion] = deviceData.deviceReport?.appVersion ?: "DefaultAppVersion"
+        this[appId] = (deviceData.deviceReport?.appVariant?:"0").toInt()
+        this[appLanguage] = deviceData.featureSettings?.appLanguage?:"de"
+        this[appTheme] = AppTheme.LIGHT
+        this[appMaxSessionDuration] = deviceData.featureSettings?.maxSessionDuration?:5
+        this[appAutoUpdateAccounts] = deviceData.featureSettings?.autoUpateBalance?:false
+        this[appAccountSorting] = 0
+        this[userName] = "fsiexp"
+        this[userFcmToken] = deviceData.userData.push_id
+        this[userDateTimeInitialLogin] = LocalDateTime.parse("1971-01-01T00:00:00.000000", DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+        this[userDateTimeLastLogin] = LocalDateTime.parse(deviceData.userData.last_login, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+        this[userAgreeCollectStatistics] = true
+        this[subscriptionWero] = deviceData.deviceReport?.wero?:false
+        this[subscriptionKwitt] = deviceData.deviceReport?.kwitt?:false
+        this[subscriptionDiamond] = deviceData.deviceReport?.applePay?:false
+        this[subscriptionAloha] = deviceData.deviceReport?.aloha?:false
+        this[subscriptionBudgetBook] = deviceData.deviceReport?.budgetBook?:false
+        this[pushNotificationsAllowSystemNotifications] = deviceData.deviceReport?.pushNotificationSettings?.system?:false
+        this[pushNotificationsAllowIndividualOffers] = deviceData.deviceReport?.pushNotificationSettings?.individualOffers?:false
+        this[pushNotificationsAllowAccountAlarm] = deviceData.deviceReport?.pushNotificationSettings?.accountAlarm?:false
+        this[pushNotificationsAllowNotificationBadge] = deviceData.deviceReport?.pushNotificationSettings?.notificationBadge?:false
+        this[pushNotificationsLastPingNotificationReceived] = LocalDateTime.parse(deviceData.deviceReport?.pushNotificationSettings?.lastPingNotificiationReceived?:"1971-01-01T00:00:00.000000", DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+        this[metricsFullAppStarts] = deviceData.appMetrics?.fullAppStartsSinceLastCommit?:0
+        this[metricsFullAppStartsMs] = deviceData.appMetrics?.fullAppStartsMsSinceLastCommit?:0
+        this[metricsSubsequentAppStarts] = deviceData.appMetrics?.subsequentAppStartsSinceLastCommit?:0
+        this[metricsSubsequentAppStartsMs] = deviceData.appMetrics?.subsequentAppStartsMsSinceLastCommit?:0
+        this[deviceLastConnect] = LocalDateTime.parse(deviceData.deviceMetaData?.lastConnect?:"1971-01-01T00:00:00.000000", DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+        this[deviceLastCommit] = LocalDateTime.parse(deviceData.deviceMetaData?.lastCommit?:"1971-01-01T00:00:00.000000", DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+    }
+
+    private fun UpdateStatement.fromDeviceData(deviceData: DeviceData) {
+        this[deviceId] = deviceData.deviceMetaData!!.deviceId
+        this[systemSfStage] = SfStage.BETA
+        this[systemMkaStage] = MkaStage.ABN
+        this[systemMkaLine] = 0
+        this[appVersion] = deviceData.deviceReport?.appVersion ?: "DefaultAppVersion"
+        this[appId] = (deviceData.deviceReport?.appVariant?:"0").toInt()
+        this[appLanguage] = deviceData.featureSettings?.appLanguage?:"de"
+        this[appTheme] = AppTheme.LIGHT
+        this[appMaxSessionDuration] = deviceData.featureSettings?.maxSessionDuration?:5
+        this[appAutoUpdateAccounts] = deviceData.featureSettings?.autoUpateBalance?:false
+        this[appAccountSorting] = 0
+        this[userName] = "fsiexp"
+        this[userFcmToken] = deviceData.userData.push_id
+        this[userDateTimeInitialLogin] = LocalDateTime.parse("1971-01-01T00:00:00.000000", DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+        this[userDateTimeLastLogin] = LocalDateTime.parse(deviceData.userData.last_login, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+        this[userAgreeCollectStatistics] = true
+        this[subscriptionWero] = deviceData.deviceReport?.wero?:false
+        this[subscriptionKwitt] = deviceData.deviceReport?.kwitt?:false
+        this[subscriptionDiamond] = deviceData.deviceReport?.applePay?:false
+        this[subscriptionAloha] = deviceData.deviceReport?.aloha?:false
+        this[subscriptionBudgetBook] = deviceData.deviceReport?.budgetBook?:false
+        this[pushNotificationsAllowSystemNotifications] = deviceData.deviceReport?.pushNotificationSettings?.system?:false
+        this[pushNotificationsAllowIndividualOffers] = deviceData.deviceReport?.pushNotificationSettings?.individualOffers?:false
+        this[pushNotificationsAllowAccountAlarm] = deviceData.deviceReport?.pushNotificationSettings?.accountAlarm?:false
+        this[pushNotificationsAllowNotificationBadge] = deviceData.deviceReport?.pushNotificationSettings?.notificationBadge?:false
+        this[pushNotificationsLastPingNotificationReceived] = LocalDateTime.parse(deviceData.deviceReport?.pushNotificationSettings?.lastPingNotificiationReceived?:"1971-01-01T00:00:00.000000", DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+        this[metricsFullAppStarts] = deviceData.appMetrics?.fullAppStartsSinceLastCommit?:0
+        this[metricsFullAppStartsMs] = deviceData.appMetrics?.fullAppStartsMsSinceLastCommit?:0
+        this[metricsSubsequentAppStarts] = deviceData.appMetrics?.subsequentAppStartsSinceLastCommit?:0
+        this[metricsSubsequentAppStartsMs] = deviceData.appMetrics?.subsequentAppStartsMsSinceLastCommit?:0
+        this[deviceLastConnect] = LocalDateTime.parse(deviceData.deviceMetaData?.lastConnect?:"1971-01-01T00:00:00.000000", DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+        this[deviceLastCommit] = LocalDateTime.parse(deviceData.deviceMetaData?.lastCommit?:"1971-01-01T00:00:00.000000", DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+    }
+
+    fun DeviceDataTable.updateOrInsert(deviceData: DeviceData): Int {
+        val updatedRows = update({ deviceId eq deviceData.deviceMetaData!!.deviceId }) {
             it.fromDeviceData(deviceData) // für UpdateStatement
         }
 

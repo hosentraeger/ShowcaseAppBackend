@@ -19,7 +19,7 @@ fun Application.configureRouting() {
         }
 
         post("/appstart") {
-            val deviceData = call.receive<DeviceDataModel>() // Empfangen der Device-Daten als Model
+            val deviceData = call.receive<DeviceData>() // Empfangen der Device-Daten als Model
             val database = DatabaseFactory.getDatabase() // Holen der Datenbankverbindung
 
             // Asynchrone Datenbankoperation
