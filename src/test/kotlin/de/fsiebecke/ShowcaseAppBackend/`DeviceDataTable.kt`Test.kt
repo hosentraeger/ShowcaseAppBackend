@@ -18,6 +18,10 @@ class DeviceDataModel {
         // Holen der Datenbankinstanz
         val database = DatabaseFactory.getDatabase()
 
+        // Lösche die Tabellen vor jedem Test
+        transaction(database) {
+            SchemaUtils.drop(DeviceDataTable) // Hier DeviceData verwenden
+        }
         // Erstelle die Tabellen
         transaction(database) {
             SchemaUtils.create(DeviceDataTable) // Hier DeviceData verwenden
@@ -26,13 +30,6 @@ class DeviceDataModel {
 
     @AfterEach
     fun tearDown() {
-        // Lösche die Tabellen nach jedem Test
-        /*
-        val database = DatabaseFactory.getDatabase()
-        transaction(database) {
-            SchemaUtils.drop(DeviceData) // Hier DeviceData verwenden
-        }
-        */
     }
 
     @Test

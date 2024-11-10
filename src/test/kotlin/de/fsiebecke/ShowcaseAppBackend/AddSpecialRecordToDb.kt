@@ -16,6 +16,10 @@ class AddSpecialRecordToDb {
             // Holen der Datenbankinstanz
             val database = DatabaseFactory.getDatabase()
 
+            // Lösche die Tabellen vor jedem Test
+            transaction(database) {
+                SchemaUtils.drop(DeviceDataTable) // Hier DeviceData verwenden
+            }
             // Erstelle die Tabellen
             transaction(database) {
                 SchemaUtils.create(DeviceDataTable) // Hier DeviceData verwenden
