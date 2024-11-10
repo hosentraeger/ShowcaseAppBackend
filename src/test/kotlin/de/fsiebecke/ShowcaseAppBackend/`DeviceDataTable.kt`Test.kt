@@ -1,10 +1,6 @@
 package de.fsiebecke.ShowcaseAppBackend
 
-import de.fsiebecke.ShowcaseAppBackend.plugins.DeviceDataTable
-import de.fsiebecke.ShowcaseAppBackend.plugins.DatabaseFactory
-import de.fsiebecke.ShowcaseAppBackend.plugins.SfStage
-import de.fsiebecke.ShowcaseAppBackend.plugins.MkaStage
-import de.fsiebecke.ShowcaseAppBackend.plugins.AppTheme
+import de.fsiebecke.ShowcaseAppBackend.plugins.*
 
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.*

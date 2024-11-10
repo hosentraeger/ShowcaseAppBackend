@@ -1,16 +1,10 @@
 package de.fsiebecke.ShowcaseAppBackend
 
-import de.fsiebecke.ShowcaseAppBackend.plugins.DeviceDataTable
-import de.fsiebecke.ShowcaseAppBackend.plugins.DatabaseFactory
-import de.fsiebecke.ShowcaseAppBackend.plugins.SfStage
-import de.fsiebecke.ShowcaseAppBackend.plugins.MkaStage
-import de.fsiebecke.ShowcaseAppBackend.plugins.AppTheme
-import de.fsiebecke.ShowcaseAppBackend.plugins.AccountSorting
+import de.fsiebecke.ShowcaseAppBackend.plugins.*
 
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.AfterEach
