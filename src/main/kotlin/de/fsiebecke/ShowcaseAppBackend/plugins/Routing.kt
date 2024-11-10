@@ -1,5 +1,6 @@
 package de.fsiebecke.ShowcaseAppBackend.plugins
 
+import de.fsiebecke.ShowcaseAppBackend.plugins.DeviceDataTable.updateOrInsert
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -11,12 +12,32 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 
-
 fun Application.configureRouting() {
     routing {
         get("/") {
             call.respondText("Hello World!")
         }
+
+        post("/appstart") {
+            val deviceData = call.receive<DeviceDataModel>() // Empfangen der Device-Daten als Model
+            val database = DatabaseFactory.getDatabase() // Holen der Datenbankverbindung
+
+            // Asynchrone Datenbankoperation
+            val result = withContext(Dispatchers.IO) {
+                transaction(database) {
+                    // Update oder Insert durchführen und die Anzahl der betroffenen Zeilen zurückgeben
+                    DeviceDataTable.updateOrInsert(deviceData)
+                }
+            }
+
+            // Antwort auf den HTTP-Request nach der Transaktion zurückgeben
+            if (result > 0) {
+                call.respond(HttpStatusCode.OK, "Daten erfolgreich erhalten und verarbeitet")
+            } else {
+                call.respond(HttpStatusCode.BadRequest, "Daten konnten nicht verarbeitet werden")
+            }
+        }
+
 
         get("/deviceData") {
             // Verwende eine Coroutine, um die Transaction zu handhaben

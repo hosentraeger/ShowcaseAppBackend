@@ -48,6 +48,9 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-java-time:0.53.0")
 
     testImplementation("io.ktor:ktor-server-test-host-jvm")
+    testImplementation("io.ktor:ktor-server-tests:$ktor_version") // Ktor Test
+    testImplementation("io.ktor:ktor-client-core:$ktor_version") // Ktor Client
+    testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version") // Kotlin Test
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }
 
