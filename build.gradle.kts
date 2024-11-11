@@ -32,6 +32,7 @@ dependencies {
     implementation("io.ktor:ktor-server-auth-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-config-yaml:$ktor_version")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktor_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0") // Für LocalDateTime
 
     // client
     implementation("io.ktor:ktor-client-core:$ktor_version")

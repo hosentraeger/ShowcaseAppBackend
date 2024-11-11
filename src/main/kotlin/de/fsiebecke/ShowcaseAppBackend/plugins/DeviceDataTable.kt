@@ -48,6 +48,7 @@ object DeviceDataTable : Table("device_data") {
     val deviceLastConnect = datetime("device_lastConnect")
     val deviceLastCommit = datetime("device_lastCommit")
 
+
     private fun InsertStatement<*>.fromDeviceData(deviceData: DeviceData) {
         this[deviceId] = deviceData.deviceMetaData!!.deviceId
         this[systemSfStage] = SfStage.BETA

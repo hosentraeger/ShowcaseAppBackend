@@ -1,5 +1,6 @@
 package de.fsiebecke.ShowcaseAppBackend.plugins
 
+import de.fsiebecke.ShowcaseAppBackend.LocalDateTimeSerializer
 import de.fsiebecke.ShowcaseAppBackend.plugins.DeviceDataTable.updateOrInsert
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -12,7 +13,23 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.contextual
+
+fun createJson(): Json {
+    val module = SerializersModule {
+        contextual(LocalDateTimeSerializer)
+    }
+
+    return Json {
+        serializersModule = module
+        ignoreUnknownKeys = true // Optional: wenn du unbekannte Felder ignorieren möchtest
+    }
+}
+
 fun Application.configureRouting() {
+    val json = createJson()
     routing {
         get("/") {
             call.respondText("Hello World!")
@@ -40,6 +57,7 @@ fun Application.configureRouting() {
 
 
         get("/deviceData") {
+            /*
             // Verwende eine Coroutine, um die Transaction zu handhaben
             val devices = withContext(Dispatchers.IO) {
                 transaction {
@@ -47,6 +65,8 @@ fun Application.configureRouting() {
                 }
             }
             call.respond(devices) // Hier kann call.respond aufgerufen werden
+            */
+            call.respond(HttpStatusCode.BadRequest, "Daten konnten nicht verarbeitet werden")
         }
 
 // Endpunkt zum Abrufen von Gerätedetails
@@ -60,12 +80,14 @@ fun Application.configureRouting() {
                     DeviceDataTable.selectAll().where { DeviceDataTable.deviceId eq deviceId }.singleOrNull()
                 }
             }
-
+/*
             if (device != null) {
                 call.respond(DeviceDataTable.toDeviceData(device))
             } else {
                 call.respond(HttpStatusCode.NotFound, "Device not found")
             }
+ */
+            call.respond(HttpStatusCode.BadRequest, "Daten konnten nicht verarbeitet werden")
         }
 
 // Endpunkt zum Löschen eines Geräts
