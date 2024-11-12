@@ -1,10 +1,11 @@
 package de.fsiebecke.ShowcaseAppBackend.plugins
 
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.javatime.datetime
 import org.jetbrains.exposed.sql.statements.InsertStatement
 import org.jetbrains.exposed.sql.statements.UpdateStatement
-import java.time.LocalDateTime
 
 // Tabelle für DeviceData
 object DataTable : Table("showcase_data") {
@@ -25,7 +26,6 @@ object DataTable : Table("showcase_data") {
     val incomeExpenseWidgetVariant = bool("income_expense_widget_variant").nullable()
     val offerAroundTheProperty = bool("offer_around_the_property").nullable()
     val offerClick2Credit = bool("offer_click2_credit").nullable()
-    val offerMergerAssistant = bool("offer_merger_assistant").nullable()
     val offerMoneyBoxFieldTesting = bool("offer_money_box_field_testing").nullable()
     val offerPrivateBanking = bool("offer_private_banking").nullable()
     val requireReviewPersonalData = bool("require_review_personal_data").nullable()
@@ -59,7 +59,7 @@ object DataTable : Table("showcase_data") {
     val subsequentAppStartsMsTotal = integer("subsequent_app_starts_ms_total").nullable()
     val subsequentAppStartsThisMonth = integer("subsequent_app_starts_this_month").nullable()
     val subsequentAppStartsTotal = integer("subsequent_app_starts_total").nullable()
-    val featuresRequiringAttention = enumerationByName("features_requiring_attention", 50, UsageFeatureEnum::class).nullable()
+    val featuresRequiringAttention = varchar("primary_user_name", 255).nullable()
     val subscribedToAloha = bool("subscribed_to_aloha").nullable()
     val subscribedToBudgetBook = bool("subscribed_to_budget_book").nullable()
     val subscribedToDiamond = bool("subscribed_to_diamond").nullable()
@@ -69,6 +69,11 @@ object DataTable : Table("showcase_data") {
     val minRequiredVersion = integer("min_required_version").nullable()
     val anonymizePersonalData = bool("anonymize_personal_data").nullable()
     val primaryUserName = varchar("primary_user_name", 255).nullable()
+    val appLoginMode = enumerationByName("app_login_mode", 50, LoginModeEnum::class).nullable()
+    val frequentlyUsedFeatures = varchar("primary_user_name", 255).nullable()
+    val allowFirebaseTracking = bool("allow_firebase_tracking").nullable()
+    val quickAccessButtons = varchar("quick_access_buttons", 255).nullable()
+    val otherRedApps = varchar("other_red_apps", 255).nullable()
 
     private fun InsertStatement<*>.fromDataModel(data: DataModel) {
         this[deviceId] = data.deviceId
@@ -88,7 +93,6 @@ object DataTable : Table("showcase_data") {
         this[incomeExpenseWidgetVariant] = data.incomeExpenseWidgetVariant
         this[offerAroundTheProperty] = data.offerAroundTheProperty
         this[offerClick2Credit] = data.offerClick2Credit
-        this[offerMergerAssistant] = data.offerMergerAssistant
         this[offerMoneyBoxFieldTesting] = data.offerMoneyBoxFieldTesting
         this[offerPrivateBanking] = data.offerPrivateBanking
         this[requireReviewPersonalData] = data.requireReviewPersonalData
@@ -100,14 +104,12 @@ object DataTable : Table("showcase_data") {
         this[allowSystemNotifications] = data.allowSystemNotifications
         this[lastPingNotificationReceivedDateTime] = data.lastPingNotificationReceivedDateTime
         this[pushToken] = data.pushToken
-        this[lastCommitDateTime] = data.lastCommitDateTime
         this[lastLoginDateTime] = data.lastLoginDateTime
         this[numberOfMbfAccounts] = data.numberOfMbfAccounts
         this[numberOfMkaAccounts] = data.numberOfMkaAccounts
         this[numberOfOtherAccounts] = data.numberOfOtherAccounts
         this[numberOfSavingBanks] = data.numberOfSavingBanks
         this[numberOfSavingBanksAccounts] = data.numberOfSavingBanksAccounts
-        this[featuresRequiringAttention] = data.featuresRequiringAttention
         this[subscribedToAloha] = data.subscribedToAloha
         this[subscribedToBudgetBook] = data.subscribedToBudgetBook
         this[subscribedToDiamond] = data.subscribedToDiamond
@@ -117,19 +119,34 @@ object DataTable : Table("showcase_data") {
         this[minRequiredVersion] = data.minRequiredVersion
         this[anonymizePersonalData] = data.anonymizePersonalData
         this[primaryUserName] = data.primaryUserName
+        this[appLoginMode] = data.appLoginMode
+        this[allowFirebaseTracking] = data.allowFirebaseTracking
+        this[featuresRequiringAttention] = data.featuresRequiringAttention?.let {
+            Json.encodeToString(it)
+        }
+        this[frequentlyUsedFeatures] = data.frequentlyUsedFeatures?.let {
+            Json.encodeToString(it)
+        }
+        this[quickAccessButtons] = data.quickAccessButtons?.let {
+            Json.encodeToString(it)
+        }
+        this[otherRedApps] = data.otherRedApps?.let {
+            Json.encodeToString(it)
+        }
+        this[fullAppStartsThisMonth] = data.fullAppStartsSinceLastCommit
+        this[fullAppStartsMsThisMonth] = data.fullAppStartsMsSinceLastCommit
+        this[fullAppStartsLastMonth] = data.fullAppStartsSinceLastCommit
+        this[fullAppStartsMsLastMonth] = data.fullAppStartsMsSinceLastCommit
+        this[fullAppStartsTotal] = data.fullAppStartsSinceLastCommit
+        this[fullAppStartsMsTotal] = data.fullAppStartsMsSinceLastCommit
+        this[subsequentAppStartsThisMonth] = data.subsequentAppStartsSinceLastCommit
+        this[subsequentAppStartsMsThisMonth] = data.subsequentAppStartsMsSinceLastCommit
+        this[subsequentAppStartsLastMonth] = data.subsequentAppStartsSinceLastCommit
+        this[subsequentAppStartsMsLastMonth] = data.subsequentAppStartsMsSinceLastCommit
+        this[subsequentAppStartsTotal] = data.subsequentAppStartsSinceLastCommit
+        this[subsequentAppStartsMsTotal] = data.subsequentAppStartsMsSinceLastCommit
 
-        this[fullAppStartsLastMonth] = 0
-        this[fullAppStartsMsLastMonth] = 0
-        this[fullAppStartsMsThisMonth] = 0
-        this[fullAppStartsMsTotal] = 0
-        this[fullAppStartsThisMonth] = 0
-        this[fullAppStartsTotal] = 0
-        this[subsequentAppStartsLastMonth] = 0
-        this[subsequentAppStartsMsLastMonth] = 0
-        this[subsequentAppStartsMsThisMonth] = 0
-        this[subsequentAppStartsMsTotal] = 0
-        this[subsequentAppStartsThisMonth] = 0
-        this[subsequentAppStartsTotal] = 0
+        this[initialLoginDateTime] = data.lastLoginDateTime
     }
 
     private fun UpdateStatement.fromDataModel(data: DataModel) {
@@ -150,7 +167,6 @@ object DataTable : Table("showcase_data") {
         this[incomeExpenseWidgetVariant] = data.incomeExpenseWidgetVariant
         this[offerAroundTheProperty] = data.offerAroundTheProperty
         this[offerClick2Credit] = data.offerClick2Credit
-        this[offerMergerAssistant] = data.offerMergerAssistant
         this[offerMoneyBoxFieldTesting] = data.offerMoneyBoxFieldTesting
         this[offerPrivateBanking] = data.offerPrivateBanking
         this[requireReviewPersonalData] = data.requireReviewPersonalData
@@ -162,14 +178,12 @@ object DataTable : Table("showcase_data") {
         this[allowSystemNotifications] = data.allowSystemNotifications
         this[lastPingNotificationReceivedDateTime] = data.lastPingNotificationReceivedDateTime
         this[pushToken] = data.pushToken
-        this[lastCommitDateTime] = data.lastCommitDateTime
         this[lastLoginDateTime] = data.lastLoginDateTime
         this[numberOfMbfAccounts] = data.numberOfMbfAccounts
         this[numberOfMkaAccounts] = data.numberOfMkaAccounts
         this[numberOfOtherAccounts] = data.numberOfOtherAccounts
         this[numberOfSavingBanks] = data.numberOfSavingBanks
         this[numberOfSavingBanksAccounts] = data.numberOfSavingBanksAccounts
-        this[featuresRequiringAttention] = data.featuresRequiringAttention
         this[subscribedToAloha] = data.subscribedToAloha
         this[subscribedToBudgetBook] = data.subscribedToBudgetBook
         this[subscribedToDiamond] = data.subscribedToDiamond
@@ -179,13 +193,23 @@ object DataTable : Table("showcase_data") {
         this[minRequiredVersion] = data.minRequiredVersion
         this[anonymizePersonalData] = data.anonymizePersonalData
         this[primaryUserName] = data.primaryUserName
-
-        /*
-                this[lastCommitIp] = data.lastCommitIp
-         */
+        this[appLoginMode] = data.appLoginMode
+        this[allowFirebaseTracking] = data.allowFirebaseTracking
+        this[featuresRequiringAttention] = data.featuresRequiringAttention?.let {
+            Json.encodeToString(it)
+        }
+        this[frequentlyUsedFeatures] = data.frequentlyUsedFeatures?.let {
+            Json.encodeToString(it)
+        }
+        this[quickAccessButtons] = data.quickAccessButtons?.let {
+            Json.encodeToString(it)
+        }
+        this[otherRedApps] = data.otherRedApps?.let {
+            Json.encodeToString(it)
+        }
     }
 
-    fun DeviceDataTable.updateOrInsert(data: DataModel, loginDateTime: LocalDateTime, loginIp: String): Int {
+    fun updateOrInsert(data: DataModel, clientIp: String): Int {
         val row = selectAll().where { deviceId eq data.deviceId }.singleOrNull()
         // Berechne die neuen Werte, falls ein Datensatz existiert
         val newFullAppStartsThisMonth =
@@ -215,16 +239,15 @@ object DataTable : Table("showcase_data") {
             it[subsequentAppStartsTotal] = newSubsequentAppStartsTotal
             it[fullAppStartsMsTotal] = newFullAppStartsMsTotal
             it[subsequentAppStartsMsTotal] = newSubsequentAppStartsMsTotal
-            it[lastCommitIp] = loginIp
+            it[lastCommitIp] = clientIp
             it.fromDataModel(data)
         }
         return if (updatedRows > 0) {
             updatedRows // Rückgabe der Anzahl der aktualisierten Zeilen
         } else {
             insert {
-                it[initialLoginDateTime] = loginDateTime
-                it[initialLoginIp] = loginIp
-                it[lastCommitIp] = loginIp
+                it[initialLoginIp] = clientIp
+                it[lastCommitIp] = clientIp
                 it.fromDataModel(data) // für InsertStatement
             }
             1 // Rückgabe von 1, um anzuzeigen, dass ein Eintrag eingefügt wurde

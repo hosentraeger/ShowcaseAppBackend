@@ -15,15 +15,17 @@ data class DataModel(
     val appTheme: AppThemeEnum? = null,
     val appVariant: String? = null,
     val appVersion: Int? = null,
+    val appLoginMode: LoginModeEnum? = null,
+    val allowFirebaseTracking: Boolean? = null,
     val deviceModel: String? = null,
     val deviceTheme: AppThemeEnum? = null,
+    val otherRedApps: List<String?>? = null,
     val osVersion: String? = null,
     val physicalDeviceId: String? = null,
     val systemLanguage: String? = null,
     val incomeExpenseWidgetVariant: Boolean? = null,
     val offerAroundTheProperty: Boolean? = null,
     val offerClick2Credit: Boolean? = null,
-    val offerMergerAssistant: Boolean? = null,
     val offerMoneyBoxFieldTesting: Boolean? = null,
     val offerPrivateBanking: Boolean? = null,
     val requireReviewPersonalData: Boolean? = null,
@@ -37,7 +39,6 @@ data class DataModel(
     val pushToken: String? = null,
     val fullAppStartsMsSinceLastCommit: Int? = null,
     val fullAppStartsSinceLastCommit: Int? = null,
-    @Contextual val lastCommitDateTime: LocalDateTime? = null,
     @Contextual val lastLoginDateTime: LocalDateTime? = null,
     val numberOfMbfAccounts: Int? = null,
     val numberOfMkaAccounts: Int? = null,
@@ -46,7 +47,8 @@ data class DataModel(
     val numberOfSavingBanksAccounts: Int? = null,
     val subsequentAppStartsMsSinceLastCommit: Int? = null,
     val subsequentAppStartsSinceLastCommit: Int? = null,
-    val featuresRequiringAttention: UsageFeatureEnum? = null,
+    val frequentlyUsedFeatures: List<UsageFeatureEnum>? = null,
+    val featuresRequiringAttention: List<UsageFeatureEnum>? = null,
     val subscribedToAloha: Boolean? = null,
     val subscribedToBudgetBook: Boolean? = null,
     val subscribedToDiamond: Boolean? = null,
@@ -54,5 +56,21 @@ data class DataModel(
     val subscribedToWero: Boolean? = null,
     val minRecommendedVersion: Int? = null,
     val minRequiredVersion: Int? = null,
-    val anonymizePersonalData: Boolean? = null
+    val anonymizePersonalData: Boolean? = null,
+    val quickAccessButtons: List<QuickAccessButtonsEnum>? = null
+)
+
+@Serializable
+data class FeaturesModel (
+    val realtimeTransfer: Boolean? = null,
+    val httpTraffic8443: Boolean? = null,
+    val sCashback: Boolean? = null,
+    val review: Boolean? = null
+)
+
+@Serializable
+data class AppstartModel (
+    val softKillVersions: List<String?>? = null,
+    val hardKillVersions: List<String?>? = null,
+    val offerMergerAssistant: Boolean? = null
 )

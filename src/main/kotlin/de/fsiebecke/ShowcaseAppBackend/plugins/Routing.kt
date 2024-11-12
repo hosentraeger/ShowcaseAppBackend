@@ -4,6 +4,7 @@ import de.fsiebecke.ShowcaseAppBackend.LocalDateTimeSerializer
 import de.fsiebecke.ShowcaseAppBackend.plugins.DeviceDataTable.updateOrInsert
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.plugins.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -55,6 +56,26 @@ fun Application.configureRouting() {
             }
         }
 
+        put("/deviceData/v2") {
+            val clientIp = call.request.origin.remoteHost
+            val dataModel = call.receive<DataModel>() // Empfangen der Device-Daten als Model
+            val database = DatabaseFactory.getDatabase() // Holen der Datenbankverbindung
+
+            // Asynchrone Datenbankoperation
+            val result = withContext(Dispatchers.IO) {
+                transaction(database) {
+                    // Update oder Insert durchführen und die Anzahl der betroffenen Zeilen zurückgeben
+                    DataTable.updateOrInsert(dataModel, clientIp)
+                }
+            }
+
+            // Antwort auf den HTTP-Request nach der Transaktion zurückgeben
+            if (result > 0) {
+                call.respond(HttpStatusCode.OK, "Daten erfolgreich erhalten und verarbeitet")
+            } else {
+                call.respond(HttpStatusCode.BadRequest, "Daten konnten nicht verarbeitet werden")
+            }
+        }
 
         get("/deviceData") {
             /*
