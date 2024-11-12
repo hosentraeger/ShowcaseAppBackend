@@ -1,6 +1,5 @@
 package de.fsiebecke.ShowcaseAppBackend.plugins
 
-import de.fsiebecke.ShowcaseAppBackend.LocalDateTimeSerializer
 import de.fsiebecke.ShowcaseAppBackend.plugins.DeviceDataTable.updateOrInsert
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -14,23 +13,7 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.contextual
-
-fun createJson(): Json {
-    val module = SerializersModule {
-        contextual(LocalDateTimeSerializer)
-    }
-
-    return Json {
-        serializersModule = module
-        ignoreUnknownKeys = true // Optional: wenn du unbekannte Felder ignorieren möchtest
-    }
-}
-
 fun Application.configureRouting() {
-    val json = createJson()
     routing {
         get("/") {
             call.respondText("Hello World!")
