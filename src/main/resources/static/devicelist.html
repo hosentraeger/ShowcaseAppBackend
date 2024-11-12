@@ -294,9 +294,9 @@
                     success: function(data) {
                         let deviceList = '';
                         data.forEach(device => {
-                            deviceList += `<tr data-id="${device.deviceId}" data-fcm="${device.userFcmToken}" data-app="${device.appId}">
-                                            <td>${device.userName}</td>
-                                            <td>${device.userDateTimeLastLogin}</td>
+                            deviceList += `<tr data-id="${device.deviceId}" data-fcm="${device.pushToken}" data-app="${device.appId}">
+                                            <td>${device.primaryUserName}</td>
+                                            <td>${device.lastLoginDateTime}</td>
                                         </tr>`;
                         });
                         $('#deviceList').html(deviceList);

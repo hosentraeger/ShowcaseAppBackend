@@ -300,12 +300,6 @@ object DataTable : Table("showcase_data") {
             numberOfSavingBanksAccounts = row[numberOfSavingBanksAccounts],
             subsequentAppStartsMsSinceLastCommit = 0,
             subsequentAppStartsSinceLastCommit = 0,
-            frequentlyUsedFeatures = row[frequentlyUsedFeatures]?.mapNotNull { feature ->
-                feature.let { UsageFeatureEnum.valueOf(feature.toString()) }
-            },
-            featuresRequiringAttention = row[featuresRequiringAttention]?.mapNotNull { feature ->
-                feature.let { UsageFeatureEnum.valueOf(feature.toString()) }
-            },
             subscribedToAloha = row[subscribedToAloha],
             subscribedToBudgetBook = row[subscribedToBudgetBook],
             subscribedToDiamond = row[subscribedToDiamond],
@@ -314,8 +308,15 @@ object DataTable : Table("showcase_data") {
             minRecommendedVersion = row[minRecommendedVersion],
             minRequiredVersion = row[minRequiredVersion],
             anonymizePersonalData = row[anonymizePersonalData],
-            quickAccessButtons = row[quickAccessButtons]?.mapNotNull { button ->
-                button.let { QuickAccessButtonsEnum.valueOf(button.toString()) }
+
+            frequentlyUsedFeatures = row[frequentlyUsedFeatures]?.let { jsonString ->
+                Json.decodeFromString<List<UsageFeatureEnum>>(jsonString)
+            },
+            featuresRequiringAttention = row[featuresRequiringAttention]?.let { jsonString ->
+                Json.decodeFromString<List<UsageFeatureEnum>>(jsonString)
+            },
+            quickAccessButtons = row[quickAccessButtons]?.let { jsonString ->
+                Json.decodeFromString<List<QuickAccessButtonsEnum>>(jsonString)
             }
         )
     }
