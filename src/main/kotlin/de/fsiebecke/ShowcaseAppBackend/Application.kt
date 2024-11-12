@@ -7,7 +7,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import java.io.File
 
-
+val CURRENT_DATA_MODEL_VERSION = 0x010000
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)

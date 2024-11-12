@@ -5,6 +5,7 @@ import java.time.LocalDateTime
 
 @Serializable
 data class DataModel(
+    val dataModelVersion: Int,
     val deviceId: String,
     val primaryUserName: String,
     val accountSorting: AccountSortingEnum? = null,

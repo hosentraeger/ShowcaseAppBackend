@@ -1,5 +1,6 @@
 package de.fsiebecke.ShowcaseAppBackend.plugins
 
+import de.fsiebecke.ShowcaseAppBackend.CURRENT_DATA_MODEL_VERSION
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.*
@@ -32,6 +33,9 @@ fun Application.configureRouting() {
         put("/deviceData/v2") {
             val clientIp = call.request.origin.remoteHost
             val dataModel = call.receive<DataModel>() // Empfangen der Device-Daten als Model
+            if ( dataModel.dataModelVersion != CURRENT_DATA_MODEL_VERSION) {
+                call.respond(HttpStatusCode.BadRequest, "Daten konnten nicht verarbeitet werden")
+            }
             val database = DatabaseFactory.getDatabase() // Holen der Datenbankverbindung
 
             // Asynchrone Datenbankoperation

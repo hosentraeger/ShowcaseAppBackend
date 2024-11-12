@@ -1,5 +1,6 @@
 package de.fsiebecke.ShowcaseAppBackend.plugins
 
+import de.fsiebecke.ShowcaseAppBackend.CURRENT_DATA_MODEL_VERSION
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.*
@@ -45,7 +46,6 @@ object DataTable : Table("showcase_data") {
     val fullAppStartsTotal = integer("full_app_starts_total").nullable()
     val initialLoginDateTime = datetime("initial_login_date_time").nullable()
     val initialLoginIp = varchar("initial_login_ip", 255).nullable()
-    val lastCommitDateTime = datetime("last_commit_date_time").nullable()
     val lastCommitIp = varchar("last_commit_ip", 255).nullable()
     val lastLoginDateTime = datetime("last_login_date_time").nullable()
     val numberOfMbfAccounts = integer("number_of_mbf_accounts").nullable()
@@ -261,6 +261,7 @@ object DataTable : Table("showcase_data") {
 
     fun toDataModel(row: ResultRow): DataModel {
         return DataModel(
+            dataModelVersion = CURRENT_DATA_MODEL_VERSION,
             deviceId = row[deviceId],
             primaryUserName = row[primaryUserName]!!,
             accountSorting = row[accountSorting],
