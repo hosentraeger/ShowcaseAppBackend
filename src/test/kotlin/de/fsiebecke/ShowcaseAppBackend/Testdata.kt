@@ -2,7 +2,7 @@ package de.fsiebecke.ShowcaseAppBackend
 
 val testData = listOf(
     """{
-        "deviceId": "123e4567-e89b-12d3-a456-426614174000",
+        "deviceId": "d85b6c99-3b13-4f4a-b3a6-2f3b2d9a5a1c",
         "primaryUserName": "fantasyUser123",
         "accountSorting": "ACCOUNTHOLDER",
         "autoUpdateBalance": true,
