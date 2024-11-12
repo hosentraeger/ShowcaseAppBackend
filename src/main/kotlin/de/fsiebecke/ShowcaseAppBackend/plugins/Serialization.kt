@@ -5,6 +5,7 @@ import io.ktor.server.application.*
 import io.ktor.server.plugins.contentnegotiation.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.contextual
 import java.time.LocalDateTime
 
 fun Application.configureSerialization() {
@@ -22,5 +23,16 @@ fun Application.configureSerialization() {
                 ignoreUnknownKeys = true // Optional, ignoriert unbekannte Keys
             }
         )
+    }
+}
+
+fun createJson(): Json {
+    val module = SerializersModule {
+        contextual(LocalDateTimeSerializer)
+    }
+
+    return Json {
+        serializersModule = module
+        ignoreUnknownKeys = true // Optional: wenn du unbekannte Felder ignorieren möchtest
     }
 }

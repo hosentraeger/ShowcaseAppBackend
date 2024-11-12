@@ -253,4 +253,70 @@ object DataTable : Table("showcase_data") {
             1 // Rückgabe von 1, um anzuzeigen, dass ein Eintrag eingefügt wurde
         }
     }
+
+    // Hilfsfunktion zum Abrufen aller Geräte
+    fun selectAllDevices(): List<ResultRow> {
+        return this.selectAll().toList() // Liste von ResultRow zurückgeben
+    }
+
+    fun toDataModel(row: ResultRow): DataModel {
+        return DataModel(
+            deviceId = row[deviceId],
+            primaryUserName = row[primaryUserName]!!,
+            accountSorting = row[accountSorting],
+            autoUpdateBalance = row[autoUpdateBalance],
+            appId = row[appId],
+            appLanguage = row[appLanguage],
+            maxSessionDuration = row[maxSessionDuration],
+            appTheme = row[appTheme],
+            appVariant = row[appVariant],
+            appVersion = row[appVersion],
+            deviceModel = row[deviceModel],
+            deviceTheme = row[deviceTheme],
+            osVersion = row[osVersion],
+            physicalDeviceId = row[physicalDeviceId],
+            systemLanguage = row[systemLanguage],
+            incomeExpenseWidgetVariant = row[incomeExpenseWidgetVariant],
+            offerAroundTheProperty = row[offerAroundTheProperty],
+            offerClick2Credit = row[offerClick2Credit],
+            offerMoneyBoxFieldTesting = row[offerMoneyBoxFieldTesting],
+            offerPrivateBanking = row[offerPrivateBanking],
+            requireReviewPersonalData = row[requireReviewPersonalData],
+            requireTermsConditionsAgreement = row[requireTermsConditionsAgreement],
+            sendDynatraceBeacons = row[sendDynatraceBeacons],
+            allowAccountAlarmNotifications = row[allowAccountAlarmNotifications],
+            allowIndividualOffersNotifications = row[allowIndividualOffersNotifications],
+            allowNotificationBadge = row[allowNotificationBadge],
+            allowSystemNotifications = row[allowSystemNotifications],
+            lastPingNotificationReceivedDateTime = row[lastPingNotificationReceivedDateTime],
+            pushToken = row[pushToken],
+            fullAppStartsMsSinceLastCommit = 0,
+            fullAppStartsSinceLastCommit = 0,
+            lastLoginDateTime = row[lastLoginDateTime],
+            numberOfMbfAccounts = row[numberOfMbfAccounts],
+            numberOfMkaAccounts = row[numberOfMkaAccounts],
+            numberOfOtherAccounts = row[numberOfOtherAccounts],
+            numberOfSavingBanks = row[numberOfSavingBanks],
+            numberOfSavingBanksAccounts = row[numberOfSavingBanksAccounts],
+            subsequentAppStartsMsSinceLastCommit = 0,
+            subsequentAppStartsSinceLastCommit = 0,
+            frequentlyUsedFeatures = row[frequentlyUsedFeatures]?.mapNotNull { feature ->
+                feature.let { UsageFeatureEnum.valueOf(feature.toString()) }
+            },
+            featuresRequiringAttention = row[featuresRequiringAttention]?.mapNotNull { feature ->
+                feature.let { UsageFeatureEnum.valueOf(feature.toString()) }
+            },
+            subscribedToAloha = row[subscribedToAloha],
+            subscribedToBudgetBook = row[subscribedToBudgetBook],
+            subscribedToDiamond = row[subscribedToDiamond],
+            subscribedToKwitt = row[subscribedToKwitt],
+            subscribedToWero = row[subscribedToWero],
+            minRecommendedVersion = row[minRecommendedVersion],
+            minRequiredVersion = row[minRequiredVersion],
+            anonymizePersonalData = row[anonymizePersonalData],
+            quickAccessButtons = row[quickAccessButtons]?.mapNotNull { button ->
+                button.let { QuickAccessButtonsEnum.valueOf(button.toString()) }
+            }
+        )
+    }
 }

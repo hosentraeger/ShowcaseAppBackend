@@ -1,6 +1,5 @@
 package de.fsiebecke.ShowcaseAppBackend.plugins
 
-import de.fsiebecke.ShowcaseAppBackend.plugins.DeviceDataTable.updateOrInsert
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.*
@@ -20,16 +19,7 @@ fun Application.configureRouting() {
         }
 
         post("/appstart") {
-            val deviceData = call.receive<DeviceData>() // Empfangen der Device-Daten als Model
-            val database = DatabaseFactory.getDatabase() // Holen der Datenbankverbindung
-
-            // Asynchrone Datenbankoperation
-            val result = withContext(Dispatchers.IO) {
-                transaction(database) {
-                    // Update oder Insert durchführen und die Anzahl der betroffenen Zeilen zurückgeben
-                    DeviceDataTable.updateOrInsert(deviceData)
-                }
-            }
+            val result = 0
 
             // Antwort auf den HTTP-Request nach der Transaktion zurückgeben
             if (result > 0) {
@@ -61,16 +51,13 @@ fun Application.configureRouting() {
         }
 
         get("/deviceData") {
-            /*
             // Verwende eine Coroutine, um die Transaction zu handhaben
             val devices = withContext(Dispatchers.IO) {
                 transaction {
-                    DeviceDataTable.selectAllDevices().map { DeviceDataTable.toDeviceData(it) }
+                    DataTable.selectAllDevices().map { DataTable.toDataModel(it) }
                 }
             }
             call.respond(devices) // Hier kann call.respond aufgerufen werden
-            */
-            call.respond(HttpStatusCode.BadRequest, "Daten konnten nicht verarbeitet werden")
         }
 
 // Endpunkt zum Abrufen von Gerätedetails
@@ -81,16 +68,15 @@ fun Application.configureRouting() {
             // Verwende eine Coroutine, um die Transaction zu handhaben
             val device = withContext(Dispatchers.IO) {
                 transaction {
-                    DeviceDataTable.selectAll().where { DeviceDataTable.deviceId eq deviceId }.singleOrNull()
+                    DataTable.selectAll().where { DataTable.deviceId eq deviceId }.singleOrNull()
                 }
             }
-/*
+
             if (device != null) {
-                call.respond(DeviceDataTable.toDeviceData(device))
+                call.respond(DataTable.toDataModel(device))
             } else {
                 call.respond(HttpStatusCode.NotFound, "Device not found")
             }
- */
             call.respond(HttpStatusCode.BadRequest, "Daten konnten nicht verarbeitet werden")
         }
 
@@ -102,7 +88,7 @@ fun Application.configureRouting() {
             // Verwende eine Coroutine, um die Transaction zu handhaben
             val deletedCount = withContext(Dispatchers.IO) {
                 transaction {
-                    DeviceDataTable.deleteWhere { DeviceDataTable.deviceId eq deviceId }
+                    DataTable.deleteWhere { DataTable.deviceId eq deviceId }
                 }
             }
 
