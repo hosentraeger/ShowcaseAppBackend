@@ -100,7 +100,7 @@ object MetricsTable : Table("showcase_metrics") {
     fun toModel(row: ResultRow): MetricsModel {
         return MetricsModel(
             dataModelVersion = CURRENT_DATA_MODEL_VERSION,
-            deviceId = row[AppstartTable.deviceId],
+            deviceId = row[deviceId],
             fullAppStartsMsSinceLastCommit = 0,
             fullAppStartsSinceLastCommit = 0,
             subsequentAppStartsMsSinceLastCommit = 0,

@@ -63,7 +63,7 @@ object FeaturesTable : Table("showcase_features") {
     fun toModel(row: ResultRow): FeaturesModel {
         return FeaturesModel(
             dataModelVersion = CURRENT_DATA_MODEL_VERSION,
-            deviceId = row[AppstartTable.deviceId],
+            deviceId = row[deviceId],
             incomeExpenseWidgetVariant = row[incomeExpenseWidgetVariant],
             offerAroundTheProperty = row[offerAroundTheProperty],
             offerClick2Credit = row[offerClick2Credit],

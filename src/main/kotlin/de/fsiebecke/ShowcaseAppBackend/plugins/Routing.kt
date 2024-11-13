@@ -65,7 +65,7 @@ fun Application.configureRouting() {
         }
 
 // Endpunkt zum Abrufen von Gerätedetails
-        get("/devices/{deviceId}") {
+        get("/devices/deviceData/{deviceId}") {
             val deviceId =
                 call.parameters["deviceId"] ?: return@get call.respond(HttpStatusCode.BadRequest, "Missing deviceId")
 
@@ -78,6 +78,65 @@ fun Application.configureRouting() {
 
             if (device != null) {
                 call.respond(DeviceDataTable.toModel(device))
+            } else {
+                call.respond(HttpStatusCode.NotFound, "Device not found")
+            }
+            call.respond(HttpStatusCode.BadRequest, "Daten konnten nicht verarbeitet werden")
+        }
+// Endpunkt zum Abrufen von Metrics
+        get("/devices/metrics/{deviceId}") {
+            val deviceId =
+                call.parameters["deviceId"] ?: return@get call.respond(HttpStatusCode.BadRequest, "Missing deviceId")
+
+            // Verwende eine Coroutine, um die Transaction zu handhaben
+            val data = withContext(Dispatchers.IO) {
+                transaction {
+                    MetricsTable.selectAll().where { MetricsTable.deviceId eq deviceId }.singleOrNull()
+                }
+            }
+
+            if (data != null) {
+                call.respond(MetricsTable.toModel(data))
+            } else {
+                call.respond(HttpStatusCode.NotFound, "Device not found")
+            }
+            call.respond(HttpStatusCode.BadRequest, "Daten konnten nicht verarbeitet werden")
+        }
+
+// Endpunkt zum Abrufen von Appstart-Daten
+        get("/devices/appstart/{deviceId}") {
+            val deviceId =
+                call.parameters["deviceId"] ?: return@get call.respond(HttpStatusCode.BadRequest, "Missing deviceId")
+
+            // Verwende eine Coroutine, um die Transaction zu handhaben
+            val data = withContext(Dispatchers.IO) {
+                transaction {
+                    AppstartTable.selectAll().where { AppstartTable.deviceId eq deviceId }.singleOrNull()
+                }
+            }
+
+            if (data != null) {
+                call.respond(AppstartTable.toModel(data))
+            } else {
+                call.respond(HttpStatusCode.NotFound, "Device not found")
+            }
+            call.respond(HttpStatusCode.BadRequest, "Daten konnten nicht verarbeitet werden")
+        }
+
+// Endpunkt zum Abrufen von Features
+        get("/devices/features/{deviceId}") {
+            val deviceId =
+                call.parameters["deviceId"] ?: return@get call.respond(HttpStatusCode.BadRequest, "Missing deviceId")
+
+            // Verwende eine Coroutine, um die Transaction zu handhaben
+            val data = withContext(Dispatchers.IO) {
+                transaction {
+                    FeaturesTable.selectAll().where { FeaturesTable.deviceId eq deviceId }.singleOrNull()
+                }
+            }
+
+            if (data != null) {
+                call.respond(FeaturesTable.toModel(data))
             } else {
                 call.respond(HttpStatusCode.NotFound, "Device not found")
             }
