@@ -43,9 +43,9 @@ object FeaturesTable : Table("showcase_features") {
         this[sendDynatraceBeacons] = data.sendDynatraceBeacons
     }
 
-    fun updateOrInsert(devId: String, data: FeaturesModel, clientIp: String): Int {
+    fun updateOrInsert(data: FeaturesModel, clientIp: String): Int {
         // Update-Versuch
-        val updatedRows = update({ deviceId eq devId }) {
+        val updatedRows = update({ deviceId eq data.deviceId }) {
             it[lastCommitIp] = clientIp
             it.fromModel(data)
         }
@@ -54,12 +54,13 @@ object FeaturesTable : Table("showcase_features") {
         } else {
             insert {
                 it[lastCommitIp] = clientIp
-                it[deviceId] = devId
+                it[deviceId] = data.deviceId
                 it.fromModel(data) // für InsertStatement
             }
             1 // Rückgabe von 1, um anzuzeigen, dass ein Eintrag eingefügt wurde
         }
     }
+
     fun toModel(row: ResultRow): FeaturesModel {
         return FeaturesModel(
             dataModelVersion = CURRENT_DATA_MODEL_VERSION,

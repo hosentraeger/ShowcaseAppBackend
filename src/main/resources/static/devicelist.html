@@ -19,11 +19,11 @@
             <tbody id="deviceList"></tbody>
         </table>
 
-        <!-- Details Overlay -->
-        <div id="detailsOverlay" style = "display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); overflow: auto;">
+        <!-- Device Overlay -->
+        <div id="deviceOverlay" style = "display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); overflow: auto;">
             <div class="overlayContent" style = "background-color: white; padding: 20px; margin: 50px auto; width: 400px; max-height: 90%; overflow-y: auto; border-radius: 8px;">
-                <h2>Gerätedetails</h2>
-                <div id="details"></div>
+                <h2>Gerät</h2>
+                <div id="device"></div>
 
                 <style>
                     .full-width {
@@ -34,35 +34,37 @@
                 <table style="width: 100%;">
                     <tr>
                         <td>
-                            <label for="detailsDeviceId">Device-ID:</label>
+                            <label for="deviceId">Device-ID:</label>
                         </td>
                         <td>
-                            <input type="text" id="detailsDeviceId" name="DeviceId" class="full-width" value="">
+                            <input type="text" id="deviceId" name="DeviceId" class="full-width" value="">
                         </td>
                     </tr>
                     <tr>
                         <td colspan="2">
-                            <label for="detailsFcmToken">FCM Token:</label>
+                            <label for="deviceFcmToken">FCM Token:</label>
                         </td>
                     <tr>
                         <td colspan="2">
-                            <textarea id="detailsFcmToken" name="detailsFcmToken" rows="5" class="full-width"></textarea>
+                            <textarea id="deviceFcmToken" name="fcmToken" rows="5" class="full-width"></textarea>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <label for="detailsAppId">App-ID</label>
+                            <label for="deviceAppId">App-ID</label>
                         </td>
                         <td>
-                            <input type="text" id="detailsAppId" name="AppId" class="full-width" value="">
+                            <input type="text" id="deviceAppId" name="AppId" class="full-width" value="">
                         </td>
                     </tr>
                 </table>
                 <button onclick="openPushForm()">Pushnachricht senden</button>
                 <button onclick="viewDetails()">Mehr Details</button>
-                <button onclick="setFeatures()">Features festlegen</button>
+                <button onclick="viewMetrics()">Metrics</button>
+                <button onclick="viewAppstart()">Appstart</button>
+                <button onclick="editFeatures()">Features festlegen</button>
                 <button onclick="deleteDevice()">Gerät löschen</button>
-                <button type="button" aria-label="Abbrechen" onclick="$('#detailsOverlay').hide();">Abbrechen</button>
+                <button type="button" aria-label="Abbrechen" onclick="$('#deviceOverlay').hide();">Abbrechen</button>
             </div>
         </div>
 
@@ -193,6 +195,80 @@
             </div>
         </div>
 
+        <div id="deviceDetailsOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); overflow: auto;">
+            <div class="overlayContent" style="background-color: white; padding: 20px; margin: 50px auto; width: 400px; max-height: 90%; overflow-y: auto; border-radius: 8px;">
+                <h2>Gerätedetails</h2>
+                <div id="detailsContainer"></div>
+                <button type="button" aria-label="Zurück" onclick="document.getElementById('deviceDetailsOverlay').style.display = 'none';">Zurück</button>
+            </div>
+        </div>
+
+        <div id="metricsOverlay" style = "display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); overflow: auto;">
+            <div class="overlayContent" style = "background-color: white; padding: 20px; margin: 50px auto; width: 400px; max-height: 90%; overflow-y: auto; border-radius: 8px;">
+                <h2>Metrics</h2>
+                <form id="metricsForm">
+                    <div id="metricsContainer"></div>
+                    <button type="button" aria-label="Zurück" onclick="$('#metricsOverlay').hide();">Zurück</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="appstartOverlay" style = "display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); overflow: auto;">
+            <div class="overlayContent" style = "background-color: white; padding: 20px; margin: 50px auto; width: 400px; max-height: 90%; overflow-y: auto; border-radius: 8px;">
+                <h2>Appstart</h2>
+                <form id="appstartForm" onsubmit="return saveAppstartData();">
+                    <div id="appstartContainer"></div>
+                    <button type="button" aria-label="Abbrechen" onclick="$('#appstartOverlay').hide();">Abbrechen</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="featuresOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); overflow: auto;">
+            <div class="overlayContent" style="background-color: white; padding: 20px; margin: 50px auto; width: 400px; max-height: 90%; overflow-y: auto; border-radius: 8px;">
+                <h2>Bearbeite Features</h2>
+                <form id="featuresForm" onsubmit="return saveFeatures();">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr>
+                            <td><label for="incomeExpenseWidgetVariant">Income Expense Widget Variant:</label></td>
+                            <td><input type="checkbox" id="incomeExpenseWidgetVariant" name="incomeExpenseWidgetVariant"></td>
+                        </tr>
+                        <tr>
+                            <td><label for="offerAroundTheProperty">Offer Around The Property:</label></td>
+                            <td><input type="checkbox" id="offerAroundTheProperty" name="offerAroundTheProperty"></td>
+                        </tr>
+                        <tr>
+                            <td><label for="offerClick2Credit">Offer Click2Credit:</label></td>
+                            <td><input type="checkbox" id="offerClick2Credit" name="offerClick2Credit"></td>
+                        </tr>
+                        <tr>
+                            <td><label for="offerMoneyBoxFieldTesting">Offer Money Box Field Testing:</label></td>
+                            <td><input type="checkbox" id="offerMoneyBoxFieldTesting" name="offerMoneyBoxFieldTesting"></td>
+                        </tr>
+                        <tr>
+                            <td><label for="offerPrivateBanking">Offer Private Banking:</label></td>
+                            <td><input type="checkbox" id="offerPrivateBanking" name="offerPrivateBanking"></td>
+                        </tr>
+                        <tr>
+                            <td><label for="requireReviewPersonalData">Require Review Personal Data:</label></td>
+                            <td><input type="checkbox" id="requireReviewPersonalData" name="requireReviewPersonalData"></td>
+                        </tr>
+                        <tr>
+                            <td><label for="requireTermsConditionsAgreement">Require Terms & Conditions Agreement:</label></td>
+                            <td><input type="checkbox" id="requireTermsConditionsAgreement" name="requireTermsConditionsAgreement"></td>
+                        </tr>
+                        <tr>
+                            <td><label for="sendDynatraceBeacons">Send Dynatrace Beacons:</label></td>
+                            <td><input type="checkbox" id="sendDynatraceBeacons" name="sendDynatraceBeacons"></td>
+                        </tr>
+                    </table>
+                    <div style="margin-top: 20px; text-align: right;">
+                        <button type="submit">Speichern</button>
+                        <button type="button" aria-label="Abbrechen" onclick="document.getElementById('featuresOverlay').style.display = 'none';">Abbrechen</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <script>
             let currentDeviceId, currentFcmToken, currentAppId;
 
@@ -203,13 +279,13 @@
                     currentFcmToken = $(this).data('fcm');
                     currentAppId = $(this).data('app');
 
-                    $('#detailsOverlay').css('display', 'block'); // Overlay anzeigen
+                    $('#deviceOverlay').css('display', 'block'); // Overlay anzeigen
 
                     // Set the value of the textarea
-                    $('#detailsFcmToken').val(currentFcmToken);
+                    $('#deviceFcmToken').val(currentFcmToken);
                     // Set the value of the text
-                    $('#detailsDeviceId').val(currentDeviceId);
-                    $('#detailsAppId').val(currentAppId);
+                    $('#deviceId').val(currentDeviceId);
+                    $('#deviceAppId').val(currentAppId);
                 });
 
                 // Event-Listener für Struktur-Select
@@ -356,12 +432,123 @@
                 });
             }
 
-            function viewDetails() {
-                alert("Zeige weitere Details");
+            async function viewDetails() {
+                try {
+                    const response = await fetch(`/devices/deviceData/${currentDeviceId}`);
+                    if (!response.ok) {
+                        throw new Error('Fehler beim Abrufen der Gerätedetails');
+                    }
+
+                    const data = await response.json();
+
+                    // Entferne dataModelVersion und deviceId aus den Daten
+                    const { dataModelVersion, deviceId, ...filteredData } = data;
+
+                    // Baue HTML für die Datenanzeige
+                    let htmlContent = '<ul>';
+                    for (const [key, value] of Object.entries(filteredData)) {
+                        htmlContent += `<li><strong>${key}:</strong> ${value}</li>`;
+                    }
+                    htmlContent += '</ul>';
+
+                    // Füge die Daten in den Container ein
+                    document.getElementById('detailsContainer').innerHTML = htmlContent;
+                    document.getElementById('deviceDetailsOverlay').style.display = 'block';
+                } catch (error) {
+                    console.error('Fehler:', error);
+                    alert('Es gab ein Problem beim Laden der Gerätedetails.');
+                }
             }
 
-            function setFeatures() {
-                alert("Features festlegen");
+            async function viewMetrics() {
+                try {
+                    const response = await fetch(`/devices/metrics/${currentDeviceId}`);
+                    if (!response.ok) {
+                        throw new Error('Fehler beim Abrufen der Metrics');
+                    }
+
+                    const data = await response.json();
+
+                    // Entferne dataModelVersion und deviceId aus den Daten
+                    const { dataModelVersion, deviceId, ...filteredData } = data;
+
+                    // Baue HTML für die Datenanzeige
+                    let htmlContent = '<ul>';
+                    for (const [key, value] of Object.entries(filteredData)) {
+                        htmlContent += `<li><strong>${key}:</strong> ${value}</li>`;
+                    }
+                    htmlContent += '</ul>';
+
+                    // Füge die Daten in den Container ein
+                    document.getElementById('metricsContainer').innerHTML = htmlContent;
+                    document.getElementById('metricsOverlay').style.display = 'block';
+                } catch (error) {
+                    console.error('Fehler:', error);
+                    alert('Es gab ein Problem beim Laden der Metrics.');
+                }
+            }
+
+            function viewAppstart() {
+                $('#appstartOverlay').removeClass('hidden');
+                $('#appstartOverlay').show();
+            }
+
+            async function editFeatures() {
+                try {
+                    const response = await fetch(`/devices/features/${currentDeviceId}`);
+                    if (!response.ok) {
+                        throw new Error('Fehler beim Abrufen der Gerätedetails');
+                    }
+
+                    const data = await response.json();
+                    document.getElementById('incomeExpenseWidgetVariant').checked = data.incomeExpenseWidgetVariant;
+                    document.getElementById('offerAroundTheProperty').checked = data.offerAroundTheProperty;
+                    document.getElementById('offerClick2Credit').checked = data.offerClick2Credit;
+                    document.getElementById('offerMoneyBoxFieldTesting').checked = data.offerMoneyBoxFieldTesting;
+                    document.getElementById('offerPrivateBanking').checked = data.offerPrivateBanking;
+                    document.getElementById('requireReviewPersonalData').checked = data.requireReviewPersonalData;
+                    document.getElementById('requireTermsConditionsAgreement').checked = data.requireTermsConditionsAgreement;
+                    document.getElementById('sendDynatraceBeacons').checked = data.sendDynatraceBeacons;
+
+                    document.getElementById('featuresOverlay').style.display = 'block';
+                } catch (error) {
+                    alert('Fehler: ' + error.message);
+                }
+            }
+
+            function saveFeatures() {
+                const updatedData = {
+                    dataModelVersion: 65536,
+                    deviceId: `${currentDeviceId}`, // Achte darauf, dass dies korrekt ist
+                    incomeExpenseWidgetVariant: document.getElementById('incomeExpenseWidgetVariant').checked,
+                    offerAroundTheProperty: document.getElementById('offerAroundTheProperty').checked,
+                    offerClick2Credit: document.getElementById('offerClick2Credit').checked,
+                    offerMoneyBoxFieldTesting: document.getElementById('offerMoneyBoxFieldTesting').checked,
+                    offerPrivateBanking: document.getElementById('offerPrivateBanking').checked,
+                    requireReviewPersonalData: document.getElementById('requireReviewPersonalData').checked,
+                    requireTermsConditionsAgreement: document.getElementById('requireTermsConditionsAgreement').checked,
+                    sendDynatraceBeacons: document.getElementById('sendDynatraceBeacons').checked
+                };
+
+                const jsonBody = JSON.stringify(updatedData)
+                console.log(jsonBody)
+                fetch(`/devices/updateFeatures`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: jsonBody
+                }).then(response => {
+                    if (!response.ok) {
+                        throw new Error('Fehler beim Speichern der Gerätedetails');
+                    }
+                    alert('Änderungen gespeichert!');
+                    document.getElementById('featuresOverlay').style.display = 'none';
+                }).catch(error => {
+                    alert('Fehler: ' + error.message);
+                });
+
+                return false;
             }
 
             function deleteDevice() {
@@ -380,7 +567,10 @@
                 // Setze die Felder im Formular
                 $("input[name='pushFormTitle']").val(randomTitle);
                 $("input[name='pushFormBody']").val(randomBody);
-             }
+            }
+
+            function saveAppstartdata() {
+            }
 
         </script>
     </body>

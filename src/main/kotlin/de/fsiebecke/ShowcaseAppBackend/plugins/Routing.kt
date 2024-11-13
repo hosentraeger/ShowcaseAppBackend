@@ -65,7 +65,7 @@ fun Application.configureRouting() {
         }
 
 // Endpunkt zum Abrufen von Gerätedetails
-        get("/devices/deviceData/{deviceId}") {
+        get("/devices/deviceDetails/{deviceId}") {
             val deviceId =
                 call.parameters["deviceId"] ?: return@get call.respond(HttpStatusCode.BadRequest, "Missing deviceId")
 
@@ -143,7 +143,31 @@ fun Application.configureRouting() {
             call.respond(HttpStatusCode.BadRequest, "Daten konnten nicht verarbeitet werden")
         }
 
-// Endpunkt zum Löschen eines Geräts
+// Endpunkt zum Speichern von Features
+        post("/devices/updateFeatures") {
+            try {
+                // JSON aus der Anfrage empfangen
+                val featureUpdateRequest = call.receive<FeaturesModel>()
+                val clientIp = call.request.origin.remoteHost
+
+                // Daten in die Datenbank speichern (Update oder Insert)
+                val result = withContext(Dispatchers.IO) {
+                    transaction {
+                        FeaturesTable.updateOrInsert(featureUpdateRequest, clientIp)
+                    }
+                }
+
+                if (result > 0) {
+                    call.respond(HttpStatusCode.OK, "Device features successfully updated or inserted")
+                } else {
+                    call.respond(HttpStatusCode.InternalServerError, "Failed to update or insert device features")
+                }
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.BadRequest, "Invalid data format or error: ${e.message}")
+            }
+        }
+
+        // Endpunkt zum Löschen eines Geräts
         delete("/devices/{deviceId}") {
             val deviceId =
                 call.parameters["deviceId"] ?: return@delete call.respond(HttpStatusCode.BadRequest, "Missing deviceId")
