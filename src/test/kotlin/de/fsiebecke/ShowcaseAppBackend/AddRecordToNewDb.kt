@@ -18,11 +18,14 @@ class AddRecordToNewDb {
 
         // Lösche die Tabellen vor jedem Test
         transaction(database) {
-            SchemaUtils.drop(DataTable) // Hier DeviceData verwenden
+            SchemaUtils.drop(DeviceDataTable) // Hier DeviceData verwenden
         }
         // Erstelle die Tabellen
         transaction(database) {
-            SchemaUtils.create(DataTable) // Hier DeviceData verwenden
+            SchemaUtils.create(DeviceDataTable) // Hier DeviceData verwenden
+            SchemaUtils.create(FeaturesTable)
+            SchemaUtils.create(MetricsTable)
+            SchemaUtils.create(AppstartTable)
         }
     }
 
@@ -35,9 +38,21 @@ class AddRecordToNewDb {
         val database = DatabaseFactory.getDatabase()
         val json = createJson() // Verwende das erstellte Json mit den richtigen Serialisierern
         testData.forEach { jsonString ->
-            val dataModel = json.decodeFromString<DataModel>(jsonString)
+            val dataModel = json.decodeFromString<DeviceDataModel>(jsonString)
+            val appstartModel = json.decodeFromString<AppstartModel>(jsonString)
+            val metricsModel = json.decodeFromString<MetricsModel>(jsonString)
+            val featuresModel = json.decodeFromString<FeaturesModel>(jsonString)
             transaction(database) {
-                DataTable.updateOrInsert(dataModel, "0.0.0.42")
+                DeviceDataTable.updateOrInsert(dataModel, "0.0.0.42")
+            }
+            transaction(database) {
+                AppstartTable.updateOrInsert(dataModel.deviceId, appstartModel, "0.0.0.42")
+            }
+            transaction(database) {
+                MetricsTable.updateOrInsert(dataModel.deviceId, metricsModel, "0.0.0.42")
+            }
+            transaction(database) {
+                FeaturesTable.updateOrInsert(dataModel.deviceId, featuresModel, "0.0.0.42")
             }
         }
         // Überprüfe, ob die Datensätze erfolgreich erstellt wurden

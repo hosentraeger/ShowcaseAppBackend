@@ -2,7 +2,9 @@ package de.fsiebecke.ShowcaseAppBackend
 
 val testData = listOf(
     """{
+        "dataModelVersion": 65536,
         "deviceId": "d85b6c99-3b13-4f4a-b3a6-2f3b2d9a5a1c",
+        "lastLoginDateTime": "2024-11-12T18:42:04",
         "primaryUserName": "fantasyUser123",
         "accountSorting": "ACCOUNTHOLDER",
         "autoUpdateBalance": true,
@@ -51,13 +53,15 @@ val testData = listOf(
         "subscribedToDiamond": true,
         "subscribedToKwitt": false,
         "subscribedToWero": true,
-        "minRecommendedVersion": 110,
-        "minRequiredVersion": 100,
+        "minRecommendedVersion": [">060000"],
+        "minRequiredVersion": ["100"],
         "anonymizePersonalData": true,
         "quickAccessButtons": ["NEWINTHEAPP", "SENDMONEY", "SEARCHTRANSACTIONS"]
     }""".trimIndent(),
     """{
+        "dataModelVersion": 65536,
         "deviceId": "987f6543-a21b-45c8-b123-98765ef4321a",
+        "lastLoginDateTime": "2024-11-12T18:42:04",
         "primaryUserName": "testUser456",
         "accountSorting": "ACCOUNTTYPE",
         "autoUpdateBalance": false,
@@ -106,14 +110,16 @@ val testData = listOf(
         "subscribedToDiamond": false,
         "subscribedToKwitt": true,
         "subscribedToWero": false,
-        "minRecommendedVersion": 150,
-        "minRequiredVersion": 130,
+        "minRecommendedVersion": ["150"],
+        "minRequiredVersion": ["130"],
         "anonymizePersonalData": false,
         "quickAccessButtons": ["SENDMONEY", "REQUESTMONEY", "SEARCHTRANSACTIONS"]
     }""".trimIndent(),
     """
     {
+        "dataModelVersion": 65536,
         "deviceId": "123e4567-e89b-12d3-a456-426614174000",
+        "lastLoginDateTime": "2024-11-12T18:42:04",
         "primaryUserName": "userAlpha",
         "accountSorting": "ACCOUNTHOLDER",
         "autoUpdateBalance": true,
@@ -162,15 +168,17 @@ val testData = listOf(
         "subscribedToDiamond": true,
         "subscribedToKwitt": false,
         "subscribedToWero": true,
-        "minRecommendedVersion": 140,
-        "minRequiredVersion": 120,
+        "minRecommendedVersion": ["140"],
+        "minRequiredVersion": ["120"],
         "anonymizePersonalData": true,
         "quickAccessButtons": ["APPLEPAY", "SINVEST", "BRANCHLOCATOR"]
     }
     """.trimIndent(),
     """
     {
+        "dataModelVersion": 65536,
         "deviceId": "999e4567-e89b-12d3-a456-426614174999",
+        "lastLoginDateTime": "2024-11-12T18:42:04",
         "primaryUserName": "userBeta",
         "accountSorting": "ACCOUNTTYPE",
         "autoUpdateBalance": false,
@@ -219,15 +227,17 @@ val testData = listOf(
         "subscribedToDiamond": false,
         "subscribedToKwitt": true,
         "subscribedToWero": false,
-        "minRecommendedVersion": 130,
-        "minRequiredVersion": 100,
+        "minRecommendedVersion": ["130"],
+        "minRequiredVersion": ["100"],
         "anonymizePersonalData": false,
         "quickAccessButtons": ["SEARCHTRANSACTIONS", "SERVICECENTER"]
     }
     """.trimIndent(),
     """
     {
+        "dataModelVersion": 65536,
         "deviceId": "888e4567-e89b-12d3-a456-426614174888",
+        "lastLoginDateTime": "2024-11-12T18:42:04",
         "primaryUserName": "userGamma",
         "accountSorting": "ACCOUNTHOLDER",
         "autoUpdateBalance": true,
@@ -276,8 +286,8 @@ val testData = listOf(
         "subscribedToDiamond": true,
         "subscribedToKwitt": true,
         "subscribedToWero": true,
-        "minRecommendedVersion": 150,
-        "minRequiredVersion": 130,
+        "minRecommendedVersion": ["150"],
+        "minRequiredVersion": ["130"],
         "anonymizePersonalData": true,
         "quickAccessButtons": ["SENDMONEY", "MAILBOX", "CARDBLOCKING"]
     }

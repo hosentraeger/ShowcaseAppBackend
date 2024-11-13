@@ -8,7 +8,6 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.AfterEach
-import java.time.LocalDateTime
 
 class AddSpecialRecordToDb {
         @BeforeEach
@@ -18,11 +17,11 @@ class AddSpecialRecordToDb {
 
             // Lösche die Tabellen vor jedem Test
             transaction(database) {
-                SchemaUtils.drop(DataTable) // Hier DeviceData verwenden
+                SchemaUtils.drop(DeviceDataTable) // Hier DeviceData verwenden
             }
             // Erstelle die Tabellen
             transaction(database) {
-                SchemaUtils.create(DataTable) // Hier DeviceData verwenden
+                SchemaUtils.create(DeviceDataTable) // Hier DeviceData verwenden
             }
         }
 
@@ -42,7 +41,7 @@ class AddSpecialRecordToDb {
             val database = DatabaseFactory.getDatabase()
 
             transaction(database) {
-                DataTable.insert {
+                DeviceDataTable.insert {
                     it[deviceId] = "3ec55ba9-cabb-4358-91c9-5c29a2f58a86"
                     it[appVersion] = 1
                     it[appId] = 7

@@ -32,7 +32,7 @@ fun Application.configureRouting() {
 
         put("/deviceData/v2") {
             val clientIp = call.request.origin.remoteHost
-            val dataModel = call.receive<DataModel>() // Empfangen der Device-Daten als Model
+            val dataModel = call.receive<DeviceDataModel>() // Empfangen der Device-Daten als Model
             if ( dataModel.dataModelVersion != CURRENT_DATA_MODEL_VERSION) {
                 call.respond(HttpStatusCode.BadRequest, "Daten konnten nicht verarbeitet werden")
             }
@@ -42,7 +42,7 @@ fun Application.configureRouting() {
             val result = withContext(Dispatchers.IO) {
                 transaction(database) {
                     // Update oder Insert durchführen und die Anzahl der betroffenen Zeilen zurückgeben
-                    DataTable.updateOrInsert(dataModel, clientIp)
+                    DeviceDataTable.updateOrInsert(dataModel, clientIp)
                 }
             }
 
@@ -58,7 +58,7 @@ fun Application.configureRouting() {
             // Verwende eine Coroutine, um die Transaction zu handhaben
             val devices = withContext(Dispatchers.IO) {
                 transaction {
-                    DataTable.selectAllDevices().map { DataTable.toDataModel(it) }
+                    DeviceDataTable.selectAllRecords().map { DeviceDataTable.toModel(it) }
                 }
             }
             call.respond(devices) // Hier kann call.respond aufgerufen werden
@@ -72,12 +72,12 @@ fun Application.configureRouting() {
             // Verwende eine Coroutine, um die Transaction zu handhaben
             val device = withContext(Dispatchers.IO) {
                 transaction {
-                    DataTable.selectAll().where { DataTable.deviceId eq deviceId }.singleOrNull()
+                    DeviceDataTable.selectAll().where { DeviceDataTable.deviceId eq deviceId }.singleOrNull()
                 }
             }
 
             if (device != null) {
-                call.respond(DataTable.toDataModel(device))
+                call.respond(DeviceDataTable.toModel(device))
             } else {
                 call.respond(HttpStatusCode.NotFound, "Device not found")
             }
@@ -92,7 +92,7 @@ fun Application.configureRouting() {
             // Verwende eine Coroutine, um die Transaction zu handhaben
             val deletedCount = withContext(Dispatchers.IO) {
                 transaction {
-                    DataTable.deleteWhere { DataTable.deviceId eq deviceId }
+                    DeviceDataTable.deleteWhere { DeviceDataTable.deviceId eq deviceId }
                 }
             }
 

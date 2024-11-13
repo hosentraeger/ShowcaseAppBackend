@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.AfterEach
-import java.time.LocalDateTime
 
 class AddMultipleEntriesToDb {
 
@@ -20,11 +19,11 @@ class AddMultipleEntriesToDb {
 
         // Lösche die Tabellen vor jedem Test
         transaction(database) {
-            SchemaUtils.drop(DataTable) // Hier DeviceData verwenden
+            SchemaUtils.drop(DeviceDataTable) // Hier DeviceData verwenden
         }
         // Erstelle die Tabellen
         transaction(database) {
-            SchemaUtils.create(DataTable) // Hier DeviceData verwenden
+            SchemaUtils.create(DeviceDataTable) // Hier DeviceData verwenden
         }
     }
 
@@ -41,7 +40,7 @@ class AddMultipleEntriesToDb {
 
         transaction(database) {
             for (i in 1..numberOfEntries) {
-                DataTable.insert {
+                DeviceDataTable.insert {
                     it[deviceId] = "device$i" // Erstelle verschiedene deviceId
                     it[appVersion] = i // Version mit laufender Nummer
                     it[appId] = i // app_id basierend auf i
@@ -53,7 +52,7 @@ class AddMultipleEntriesToDb {
 
         // Überprüfe, ob die Datensätze erfolgreich erstellt wurden
         transaction(database) {
-            val count = DataTable.selectAll().count().toInt()
+            val count = DeviceDataTable.selectAll().count().toInt()
             assertEquals(numberOfEntries, count) // Überprüfe, ob die erwartete Anzahl von Datensätzen existiert
         }
     }

@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.statements.InsertStatement
 import org.jetbrains.exposed.sql.statements.UpdateStatement
 
 // Tabelle für DeviceData
-object DataTable : Table("showcase_data") {
+object DeviceDataTable : Table("showcase_device_data") {
     val deviceId = varchar("deviceId", 255).uniqueIndex() // Primary Key
     val accountSorting = enumerationByName("account_sorting", 50, AccountSortingEnum::class).nullable()
     val autoUpdateBalance = bool("auto_update_balance").nullable()
@@ -24,58 +24,36 @@ object DataTable : Table("showcase_data") {
     val osVersion = varchar("os_version", 255).nullable()
     val physicalDeviceId = varchar("physical_device_id", 255).nullable()
     val systemLanguage = varchar("system_language", 255).nullable()
-    val incomeExpenseWidgetVariant = bool("income_expense_widget_variant").nullable()
-    val offerAroundTheProperty = bool("offer_around_the_property").nullable()
-    val offerClick2Credit = bool("offer_click2_credit").nullable()
-    val offerMoneyBoxFieldTesting = bool("offer_money_box_field_testing").nullable()
-    val offerPrivateBanking = bool("offer_private_banking").nullable()
-    val requireReviewPersonalData = bool("require_review_personal_data").nullable()
-    val requireTermsConditionsAgreement = bool("require_terms_conditions_agreement").nullable()
-    val sendDynatraceBeacons = bool("send_dynatrace_beacons").nullable()
     val allowAccountAlarmNotifications = bool("allow_account_alarm_notifications").nullable()
     val allowIndividualOffersNotifications = bool("allow_individual_offers_notifications").nullable()
     val allowNotificationBadge = bool("allow_notification_badge").nullable()
     val allowSystemNotifications = bool("allow_system_notifications").nullable()
     val lastPingNotificationReceivedDateTime = datetime("last_ping_notification_received_date_time").nullable()
     val pushToken = varchar("push_token", 255).nullable()
-    val fullAppStartsLastMonth = integer("full_app_starts_last_month").nullable()
-    val fullAppStartsMsLastMonth = integer("full_app_starts_ms_last_month").nullable()
-    val fullAppStartsMsThisMonth = integer("full_app_starts_ms_this_month").nullable()
-    val fullAppStartsMsTotal = integer("full_app_starts_ms_total").nullable()
-    val fullAppStartsThisMonth = integer("full_app_starts_this_month").nullable()
-    val fullAppStartsTotal = integer("full_app_starts_total").nullable()
     val initialLoginDateTime = datetime("initial_login_date_time").nullable()
     val initialLoginIp = varchar("initial_login_ip", 255).nullable()
-    val lastCommitIp = varchar("last_commit_ip", 255).nullable()
     val lastLoginDateTime = datetime("last_login_date_time").nullable()
+    val lastCommitIp = varchar("last_commit_ip", 255).nullable()
     val numberOfMbfAccounts = integer("number_of_mbf_accounts").nullable()
     val numberOfMkaAccounts = integer("number_of_mka_accounts").nullable()
     val numberOfOtherAccounts = integer("number_of_other_accounts").nullable()
     val numberOfSavingBanks = integer("number_of_saving_banks").nullable()
     val numberOfSavingBanksAccounts = integer("number_of_saving_banks_accounts").nullable()
-    val subsequentAppStartsLastMonth = integer("subsequent_app_starts_last_month").nullable()
-    val subsequentAppStartsMsLastMonth = integer("subsequent_app_starts_ms_last_month").nullable()
-    val subsequentAppStartsMsThisMonth = integer("subsequent_app_starts_ms_this_month").nullable()
-    val subsequentAppStartsMsTotal = integer("subsequent_app_starts_ms_total").nullable()
-    val subsequentAppStartsThisMonth = integer("subsequent_app_starts_this_month").nullable()
-    val subsequentAppStartsTotal = integer("subsequent_app_starts_total").nullable()
-    val featuresRequiringAttention = varchar("features_requiring_attention", 255).nullable()
     val subscribedToAloha = bool("subscribed_to_aloha").nullable()
     val subscribedToBudgetBook = bool("subscribed_to_budget_book").nullable()
     val subscribedToDiamond = bool("subscribed_to_diamond").nullable()
     val subscribedToKwitt = bool("subscribed_to_kwitt").nullable()
     val subscribedToWero = bool("subscribed_to_wero").nullable()
-    val minRecommendedVersion = integer("min_recommended_version").nullable()
-    val minRequiredVersion = integer("min_required_version").nullable()
     val anonymizePersonalData = bool("anonymize_personal_data").nullable()
     val primaryUserName = varchar("primary_user_name", 255).nullable()
     val appLoginMode = enumerationByName("app_login_mode", 50, LoginModeEnum::class).nullable()
-    val frequentlyUsedFeatures = varchar("frequently_used_features", 255).nullable()
     val allowFirebaseTracking = bool("allow_firebase_tracking").nullable()
     val quickAccessButtons = varchar("quick_access_buttons", 255).nullable()
     val otherRedApps = varchar("other_red_apps", 255).nullable()
+    val featuresRequiringAttention = varchar("features_requiring_attention", 255).nullable()
+    val frequentlyUsedFeatures = varchar("frequently_used_features", 255).nullable()
 
-    private fun InsertStatement<*>.fromDataModel(data: DataModel) {
+    private fun InsertStatement<*>.fromModel(data: DeviceDataModel) {
         this[deviceId] = data.deviceId
         this[accountSorting] = data.accountSorting
         this[autoUpdateBalance] = data.autoUpdateBalance
@@ -90,14 +68,6 @@ object DataTable : Table("showcase_data") {
         this[osVersion] = data.osVersion
         this[physicalDeviceId] = data.physicalDeviceId
         this[systemLanguage] = data.systemLanguage
-        this[incomeExpenseWidgetVariant] = data.incomeExpenseWidgetVariant
-        this[offerAroundTheProperty] = data.offerAroundTheProperty
-        this[offerClick2Credit] = data.offerClick2Credit
-        this[offerMoneyBoxFieldTesting] = data.offerMoneyBoxFieldTesting
-        this[offerPrivateBanking] = data.offerPrivateBanking
-        this[requireReviewPersonalData] = data.requireReviewPersonalData
-        this[requireTermsConditionsAgreement] = data.requireTermsConditionsAgreement
-        this[sendDynatraceBeacons] = data.sendDynatraceBeacons
         this[allowAccountAlarmNotifications] = data.allowAccountAlarmNotifications
         this[allowIndividualOffersNotifications] = data.allowIndividualOffersNotifications
         this[allowNotificationBadge] = data.allowNotificationBadge
@@ -115,8 +85,6 @@ object DataTable : Table("showcase_data") {
         this[subscribedToDiamond] = data.subscribedToDiamond
         this[subscribedToKwitt] = data.subscribedToKwitt
         this[subscribedToWero] = data.subscribedToWero
-        this[minRecommendedVersion] = data.minRecommendedVersion
-        this[minRequiredVersion] = data.minRequiredVersion
         this[anonymizePersonalData] = data.anonymizePersonalData
         this[primaryUserName] = data.primaryUserName
         this[appLoginMode] = data.appLoginMode
@@ -133,23 +101,11 @@ object DataTable : Table("showcase_data") {
         this[otherRedApps] = data.otherRedApps?.let {
             Json.encodeToString(it)
         }
-        this[fullAppStartsThisMonth] = data.fullAppStartsSinceLastCommit
-        this[fullAppStartsMsThisMonth] = data.fullAppStartsMsSinceLastCommit
-        this[fullAppStartsLastMonth] = data.fullAppStartsSinceLastCommit
-        this[fullAppStartsMsLastMonth] = data.fullAppStartsMsSinceLastCommit
-        this[fullAppStartsTotal] = data.fullAppStartsSinceLastCommit
-        this[fullAppStartsMsTotal] = data.fullAppStartsMsSinceLastCommit
-        this[subsequentAppStartsThisMonth] = data.subsequentAppStartsSinceLastCommit
-        this[subsequentAppStartsMsThisMonth] = data.subsequentAppStartsMsSinceLastCommit
-        this[subsequentAppStartsLastMonth] = data.subsequentAppStartsSinceLastCommit
-        this[subsequentAppStartsMsLastMonth] = data.subsequentAppStartsMsSinceLastCommit
-        this[subsequentAppStartsTotal] = data.subsequentAppStartsSinceLastCommit
-        this[subsequentAppStartsMsTotal] = data.subsequentAppStartsMsSinceLastCommit
 
         this[initialLoginDateTime] = data.lastLoginDateTime
     }
 
-    private fun UpdateStatement.fromDataModel(data: DataModel) {
+    private fun UpdateStatement.fromModel(data: DeviceDataModel) {
         this[deviceId] = data.deviceId
         this[accountSorting] = data.accountSorting
         this[autoUpdateBalance] = data.autoUpdateBalance
@@ -164,14 +120,6 @@ object DataTable : Table("showcase_data") {
         this[osVersion] = data.osVersion
         this[physicalDeviceId] = data.physicalDeviceId
         this[systemLanguage] = data.systemLanguage
-        this[incomeExpenseWidgetVariant] = data.incomeExpenseWidgetVariant
-        this[offerAroundTheProperty] = data.offerAroundTheProperty
-        this[offerClick2Credit] = data.offerClick2Credit
-        this[offerMoneyBoxFieldTesting] = data.offerMoneyBoxFieldTesting
-        this[offerPrivateBanking] = data.offerPrivateBanking
-        this[requireReviewPersonalData] = data.requireReviewPersonalData
-        this[requireTermsConditionsAgreement] = data.requireTermsConditionsAgreement
-        this[sendDynatraceBeacons] = data.sendDynatraceBeacons
         this[allowAccountAlarmNotifications] = data.allowAccountAlarmNotifications
         this[allowIndividualOffersNotifications] = data.allowIndividualOffersNotifications
         this[allowNotificationBadge] = data.allowNotificationBadge
@@ -189,8 +137,6 @@ object DataTable : Table("showcase_data") {
         this[subscribedToDiamond] = data.subscribedToDiamond
         this[subscribedToKwitt] = data.subscribedToKwitt
         this[subscribedToWero] = data.subscribedToWero
-        this[minRecommendedVersion] = data.minRecommendedVersion
-        this[minRequiredVersion] = data.minRequiredVersion
         this[anonymizePersonalData] = data.anonymizePersonalData
         this[primaryUserName] = data.primaryUserName
         this[appLoginMode] = data.appLoginMode
@@ -209,38 +155,11 @@ object DataTable : Table("showcase_data") {
         }
     }
 
-    fun updateOrInsert(data: DataModel, clientIp: String): Int {
-        val row = selectAll().where { deviceId eq data.deviceId }.singleOrNull()
-        // Berechne die neuen Werte, falls ein Datensatz existiert
-        val newFullAppStartsThisMonth =
-            row?.get(fullAppStartsThisMonth) ?: (0 + (data.fullAppStartsSinceLastCommit ?: 0))
-        val newSubsequentAppStartsThisMonth =
-            row?.get(subsequentAppStartsThisMonth) ?: (0 + (data.subsequentAppStartsSinceLastCommit ?: 0))
-        val newFullAppStartsMsThisMonth =
-            row?.get(fullAppStartsMsThisMonth) ?: (0 + (data.fullAppStartsMsSinceLastCommit ?: 0))
-        val newSubsequentAppStartsMsThisMonth =
-            row?.get(subsequentAppStartsMsThisMonth) ?: (0 + (data.subsequentAppStartsMsSinceLastCommit ?: 0))
-        val newFullAppStartsTotal =
-            row?.get(fullAppStartsTotal) ?: (0 + (data.fullAppStartsSinceLastCommit ?: 0))
-        val newSubsequentAppStartsTotal =
-            row?.get(subsequentAppStartsTotal) ?: (0 + (data.subsequentAppStartsSinceLastCommit ?: 0))
-        val newFullAppStartsMsTotal =
-            row?.get(fullAppStartsMsTotal) ?: (0 + (data.fullAppStartsMsSinceLastCommit ?: 0))
-        val newSubsequentAppStartsMsTotal =
-            row?.get(subsequentAppStartsMsTotal) ?: (0 + (data.subsequentAppStartsMsSinceLastCommit ?: 0))
-
+    fun updateOrInsert(data: DeviceDataModel, clientIp: String): Int {
         // Update-Versuch
         val updatedRows = update({ deviceId eq data.deviceId }) {
-            it[fullAppStartsThisMonth] = newFullAppStartsThisMonth
-            it[subsequentAppStartsThisMonth] = newSubsequentAppStartsThisMonth
-            it[fullAppStartsMsThisMonth] = newFullAppStartsMsThisMonth
-            it[subsequentAppStartsMsThisMonth] = newSubsequentAppStartsMsThisMonth
-            it[fullAppStartsTotal] = newFullAppStartsTotal
-            it[subsequentAppStartsTotal] = newSubsequentAppStartsTotal
-            it[fullAppStartsMsTotal] = newFullAppStartsMsTotal
-            it[subsequentAppStartsMsTotal] = newSubsequentAppStartsMsTotal
             it[lastCommitIp] = clientIp
-            it.fromDataModel(data)
+            it.fromModel(data)
         }
         return if (updatedRows > 0) {
             updatedRows // Rückgabe der Anzahl der aktualisierten Zeilen
@@ -248,19 +167,14 @@ object DataTable : Table("showcase_data") {
             insert {
                 it[initialLoginIp] = clientIp
                 it[lastCommitIp] = clientIp
-                it.fromDataModel(data) // für InsertStatement
+                it.fromModel(data) // für InsertStatement
             }
             1 // Rückgabe von 1, um anzuzeigen, dass ein Eintrag eingefügt wurde
         }
     }
 
-    // Hilfsfunktion zum Abrufen aller Geräte
-    fun selectAllDevices(): List<ResultRow> {
-        return this.selectAll().toList() // Liste von ResultRow zurückgeben
-    }
-
-    fun toDataModel(row: ResultRow): DataModel {
-        return DataModel(
+    fun toModel(row: ResultRow): DeviceDataModel {
+        return DeviceDataModel(
             dataModelVersion = CURRENT_DATA_MODEL_VERSION,
             deviceId = row[deviceId],
             primaryUserName = row[primaryUserName]!!,
@@ -277,37 +191,23 @@ object DataTable : Table("showcase_data") {
             osVersion = row[osVersion],
             physicalDeviceId = row[physicalDeviceId],
             systemLanguage = row[systemLanguage],
-            incomeExpenseWidgetVariant = row[incomeExpenseWidgetVariant],
-            offerAroundTheProperty = row[offerAroundTheProperty],
-            offerClick2Credit = row[offerClick2Credit],
-            offerMoneyBoxFieldTesting = row[offerMoneyBoxFieldTesting],
-            offerPrivateBanking = row[offerPrivateBanking],
-            requireReviewPersonalData = row[requireReviewPersonalData],
-            requireTermsConditionsAgreement = row[requireTermsConditionsAgreement],
-            sendDynatraceBeacons = row[sendDynatraceBeacons],
             allowAccountAlarmNotifications = row[allowAccountAlarmNotifications],
             allowIndividualOffersNotifications = row[allowIndividualOffersNotifications],
             allowNotificationBadge = row[allowNotificationBadge],
             allowSystemNotifications = row[allowSystemNotifications],
             lastPingNotificationReceivedDateTime = row[lastPingNotificationReceivedDateTime],
             pushToken = row[pushToken],
-            fullAppStartsMsSinceLastCommit = 0,
-            fullAppStartsSinceLastCommit = 0,
             lastLoginDateTime = row[lastLoginDateTime],
             numberOfMbfAccounts = row[numberOfMbfAccounts],
             numberOfMkaAccounts = row[numberOfMkaAccounts],
             numberOfOtherAccounts = row[numberOfOtherAccounts],
             numberOfSavingBanks = row[numberOfSavingBanks],
             numberOfSavingBanksAccounts = row[numberOfSavingBanksAccounts],
-            subsequentAppStartsMsSinceLastCommit = 0,
-            subsequentAppStartsSinceLastCommit = 0,
             subscribedToAloha = row[subscribedToAloha],
             subscribedToBudgetBook = row[subscribedToBudgetBook],
             subscribedToDiamond = row[subscribedToDiamond],
             subscribedToKwitt = row[subscribedToKwitt],
             subscribedToWero = row[subscribedToWero],
-            minRecommendedVersion = row[minRecommendedVersion],
-            minRequiredVersion = row[minRequiredVersion],
             anonymizePersonalData = row[anonymizePersonalData],
 
             frequentlyUsedFeatures = row[frequentlyUsedFeatures]?.let { jsonString ->
@@ -320,5 +220,10 @@ object DataTable : Table("showcase_data") {
                 Json.decodeFromString<List<QuickAccessButtonsEnum>>(jsonString)
             }
         )
+    }
+
+    // Hilfsfunktion zum Abrufen aller Geräte
+    fun selectAllRecords(): List<ResultRow> {
+        return this.selectAll().toList() // Liste von ResultRow zurückgeben
     }
 }
