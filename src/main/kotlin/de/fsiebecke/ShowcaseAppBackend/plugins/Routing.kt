@@ -15,10 +15,6 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 fun Application.configureRouting() {
     routing {
-        get("/") {
-            call.respondText("Hello World!")
-        }
-
         post("/appstart") {
             val result = 0
 
@@ -42,7 +38,7 @@ fun Application.configureRouting() {
             val result = withContext(Dispatchers.IO) {
                 transaction(database) {
                     // Update oder Insert durchführen und die Anzahl der betroffenen Zeilen zurückgeben
-                    DeviceDataTable.updateOrInsert(dataModel, clientIp)
+                    DeviceTable.updateOrInsert(dataModel, clientIp)
                 }
             }
 
@@ -58,7 +54,7 @@ fun Application.configureRouting() {
             // Verwende eine Coroutine, um die Transaction zu handhaben
             val devices = withContext(Dispatchers.IO) {
                 transaction {
-                    DeviceDataTable.selectAllRecords().map { DeviceDataTable.toModel(it) }
+                    DeviceTable.selectAllRecords().map { DeviceTable.toModel(it) }
                 }
             }
             call.respond(devices) // Hier kann call.respond aufgerufen werden
@@ -72,12 +68,12 @@ fun Application.configureRouting() {
             // Verwende eine Coroutine, um die Transaction zu handhaben
             val device = withContext(Dispatchers.IO) {
                 transaction {
-                    DeviceDataTable.selectAll().where { DeviceDataTable.deviceId eq deviceId }.singleOrNull()
+                    DeviceTable.selectAll().where { DeviceTable.deviceId eq deviceId }.singleOrNull()
                 }
             }
 
             if (device != null) {
-                call.respond(DeviceDataTable.toModel(device))
+                call.respond(DeviceTable.toModel(device))
             } else {
                 call.respond(HttpStatusCode.NotFound, "Device not found")
             }
@@ -147,13 +143,13 @@ fun Application.configureRouting() {
         post("/devices/updateFeatures") {
             try {
                 // JSON aus der Anfrage empfangen
-                val featureUpdateRequest = call.receive<FeaturesModel>()
+                val featureUpdateRequest = call.receive<FeaturesDataModel>()
                 val clientIp = call.request.origin.remoteHost
 
                 // Daten in die Datenbank speichern (Update oder Insert)
                 val result = withContext(Dispatchers.IO) {
                     transaction {
-                        FeaturesTable.updateOrInsert(featureUpdateRequest, clientIp)
+                        FeaturesTable.updateOrInsert(featureUpdateRequest.deviceId,featureUpdateRequest, clientIp)
                     }
                 }
 
@@ -175,7 +171,7 @@ fun Application.configureRouting() {
             // Verwende eine Coroutine, um die Transaction zu handhaben
             val deletedCount = withContext(Dispatchers.IO) {
                 transaction {
-                    DeviceDataTable.deleteWhere { DeviceDataTable.deviceId eq deviceId }
+                    DeviceTable.deleteWhere { DeviceTable.deviceId eq deviceId }
                 }
             }
 
