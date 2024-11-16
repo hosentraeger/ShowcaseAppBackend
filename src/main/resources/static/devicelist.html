@@ -61,7 +61,7 @@
                 <button onclick="openPushForm()">Pushnachricht senden</button>
                 <button onclick="viewDetails()">Mehr Details</button>
                 <button onclick="viewMetrics()">Metrics</button>
-                <button onclick="viewAppstart()">Appstart</button>
+                <button onclick="editAppstart()">Appstart</button>
                 <button onclick="editFeatures()">Features festlegen</button>
                 <button onclick="deleteDevice()">Gerät löschen</button>
                 <button type="button" aria-label="Abbrechen" onclick="$('#deviceOverlay').hide();">Abbrechen</button>
@@ -196,7 +196,7 @@
         </div>
 
         <div id="deviceDetailsOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); overflow: auto;">
-            <div class="overlayContent" style="background-color: white; padding: 20px; margin: 50px auto; width: 400px; max-height: 90%; overflow-y: auto; border-radius: 8px;">
+            <div class="overlayContent" style="background-color: white; padding: 20px; margin: 50px auto; width: 80%; max-height: 90%; overflow-y: auto; border-radius: 8px;">
                 <h2>Gerätedetails</h2>
                 <div id="detailsContainer"></div>
                 <button type="button" aria-label="Zurück" onclick="document.getElementById('deviceDetailsOverlay').style.display = 'none';">Zurück</button>
@@ -204,7 +204,7 @@
         </div>
 
         <div id="metricsOverlay" style = "display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); overflow: auto;">
-            <div class="overlayContent" style = "background-color: white; padding: 20px; margin: 50px auto; width: 400px; max-height: 90%; overflow-y: auto; border-radius: 8px;">
+            <div class="overlayContent" style = "background-color: white; padding: 20px; margin: 50px auto; width: 80%; max-height: 90%; overflow-y: auto; border-radius: 8px;">
                 <h2>Metrics</h2>
                 <form id="metricsForm">
                     <div id="metricsContainer"></div>
@@ -214,17 +214,41 @@
         </div>
 
         <div id="appstartOverlay" style = "display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); overflow: auto;">
-            <div class="overlayContent" style = "background-color: white; padding: 20px; margin: 50px auto; width: 400px; max-height: 90%; overflow-y: auto; border-radius: 8px;">
+            <div class="overlayContent" style = "background-color: white; padding: 20px; margin: 50px auto; width: 80%; max-height: 90%; overflow-y: auto; border-radius: 8px;">
                 <h2>Appstart</h2>
                 <form id="appstartForm" onsubmit="return saveAppstartData();">
-                    <div id="appstartContainer"></div>
-                    <button type="button" aria-label="Abbrechen" onclick="$('#appstartOverlay').hide();">Abbrechen</button>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr>
+                            <td><label for="mergeAssistantBlz">Bankleitzahlen zur Fusion:</label></td>
+                            <td><input type="text" id="mergeAssistantBlz" name="mergeAssistantBlz"></td>
+                        </tr>
+                        <tr>
+                            <td><label for="mergeAssistantFromDateTime">Fusionsassistent von:</label></td>
+                            <td><input type="text" id="mergeAssistantFromDateTime" name="mergeAssistantFromDateTime"></td>
+                        </tr>
+                        <tr>
+                            <td><label for="mergeAssistantToDateTime">Fusionsassistent bis:</label></td>
+                            <td><input type="text" id="mergeAssistantToDateTime" name="mergeAssistantToDateTime"></td>
+                        </tr>
+                        <tr>
+                            <td><label for="recommendedVersions">Empfohlene Versionen:</label></td>
+                            <td><input type="text" id="recommendedVersions" name="recommendedVersions"></td>
+                        </tr>
+                        <tr>
+                            <td><label for="requiredVersions">Erforderliche Versionen:</label></td>
+                            <td><input type="text" id="requiredVersions" name="requiredVersions"></td>
+                        </tr>
+                    </table>
+                    <div style="margin-top: 20px; text-align: right;">
+                        <button type="submit">Speichern</button>
+                        <button type="button" aria-label="Abbrechen" onclick="document.getElementById('appstartOverlay').style.display = 'none';">Abbrechen</button>
+                    </div>
                 </form>
             </div>
         </div>
 
         <div id="featuresOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); overflow: auto;">
-            <div class="overlayContent" style="background-color: white; padding: 20px; margin: 50px auto; width: 400px; max-height: 90%; overflow-y: auto; border-radius: 8px;">
+            <div class="overlayContent" style="background-color: white; padding: 20px; margin: 50px auto; width: 80%; max-height: 90%; overflow-y: auto; border-radius: 8px;">
                 <h2>Bearbeite Features</h2>
                 <form id="featuresForm" onsubmit="return saveFeatures();">
                     <table style="width: 100%; border-collapse: collapse;">
@@ -270,11 +294,12 @@
         </div>
 
         <script>
-            let currentDeviceId, currentFcmToken, currentAppId;
+            let currentDeviceId, currentFcmToken, currentAppId, currentUserName;
 
             $(document).ready(function() {
                 // Click auf ein Element der Tabelle
                 $(document).on('click', '#deviceList tr', function() {
+                    currentUserName = $(this).data('username');
                     currentDeviceId = $(this).data('id');
                     currentFcmToken = $(this).data('fcm');
                     currentAppId = $(this).data('app');
@@ -370,7 +395,7 @@
                     success: function(data) {
                         let deviceList = '';
                         data.forEach(device => {
-                            deviceList += `<tr data-id="${device.deviceId}" data-fcm="${device.pushToken}" data-app="${device.appId}">
+                            deviceList += `<tr id="device-${device.deviceId}" data-id="${device.deviceId}" data-fcm="${device.pushToken}" data-app="${device.appId}" data-username="${device.primaryUserName}">
                                             <td>${device.primaryUserName}</td>
                                             <td>${device.lastLoginDateTime}</td>
                                         </tr>`;
@@ -434,7 +459,7 @@
 
             async function viewDetails() {
                 try {
-                    const response = await fetch(`/devices/deviceData/${currentDeviceId}`);
+                    const response = await fetch(`/devices/deviceDetails/${currentDeviceId}`);
                     if (!response.ok) {
                         throw new Error('Fehler beim Abrufen der Gerätedetails');
                     }
@@ -444,12 +469,14 @@
                     // Entferne dataModelVersion und deviceId aus den Daten
                     const { dataModelVersion, deviceId, ...filteredData } = data;
 
-                    // Baue HTML für die Datenanzeige
-                    let htmlContent = '<ul>';
+                    // Baue HTML für die Datenanzeige in einer Tabelle
+                    let htmlContent = '<table border="1" cellspacing="0" cellpadding="5">';
+                    htmlContent += '<thead><tr><th>Eigenschaft</th><th>Wert</th></tr></thead>';
+                    htmlContent += '<tbody>';
                     for (const [key, value] of Object.entries(filteredData)) {
-                        htmlContent += `<li><strong>${key}:</strong> ${value}</li>`;
+                        htmlContent += `<tr><td>${key}</td><td>${value}</td></tr>`;
                     }
-                    htmlContent += '</ul>';
+                    htmlContent += '</tbody></table>';
 
                     // Füge die Daten in den Container ein
                     document.getElementById('detailsContainer').innerHTML = htmlContent;
@@ -472,12 +499,14 @@
                     // Entferne dataModelVersion und deviceId aus den Daten
                     const { dataModelVersion, deviceId, ...filteredData } = data;
 
-                    // Baue HTML für die Datenanzeige
-                    let htmlContent = '<ul>';
+                    // Baue HTML für die Datenanzeige in einer Tabelle
+                    let htmlContent = '<table border="1" cellspacing="0" cellpadding="5">';
+                    htmlContent += '<thead><tr><th>Eigenschaft</th><th>Wert</th></tr></thead>';
+                    htmlContent += '<tbody>';
                     for (const [key, value] of Object.entries(filteredData)) {
-                        htmlContent += `<li><strong>${key}:</strong> ${value}</li>`;
+                        htmlContent += `<tr><td>${key}</td><td>${value}</td></tr>`;
                     }
-                    htmlContent += '</ul>';
+                    htmlContent += '</tbody></table>';
 
                     // Füge die Daten in den Container ein
                     document.getElementById('metricsContainer').innerHTML = htmlContent;
@@ -488,10 +517,59 @@
                 }
             }
 
-            function viewAppstart() {
-                $('#appstartOverlay').removeClass('hidden');
-                $('#appstartOverlay').show();
+            async function editAppstart() {
+                try {
+                    const response = await fetch(`/devices/appstart/${currentDeviceId}`);
+                    if (!response.ok) {
+                        throw new Error('Fehler beim Abrufen der Gerätedetails');
+                    }
+
+                    const data = await response.json();
+                    document.getElementById('mergeAssistantBlz').value = data.mergeAssistantBlz || '';
+                    document.getElementById('mergeAssistantFromDateTime').value = data.mergeAssistantFromDateTime || '';
+                    document.getElementById('mergeAssistantToDateTime').value = data.mergeAssistantToDateTime || '';
+                    document.getElementById('recommendedVersions').value = data.recommendedVersions || '';
+                    document.getElementById('requiredVersions').value = data.requiredVersions || '';
+
+                    document.getElementById('appstartOverlay').style.display = 'block';
+                } catch (error) {
+                    alert('Fehler: ' + error.message);
+                }
             }
+
+            function saveAppstartData() {
+                const updatedData = {
+                    dataModelVersion: 65536,
+                    deviceId: `${currentDeviceId}`, // Achte darauf, dass dies korrekt ist
+                    mergeAssistantBlz: document.getElementById('mergeAssistantBlz').value,
+                    mergeAssistantFromDateTime: document.getElementById('mergeAssistantFromDateTime').value,
+                    mergeAssistantToDateTime: document.getElementById('mergeAssistantToDateTime').value,
+                    recommendedVersions: document.getElementById('recommendedVersions').value,
+                    requiredVersions: document.getElementById('requiredVersions').value
+                };
+
+                const jsonBody = JSON.stringify(updatedData);
+                console.log(jsonBody);
+
+                fetch(`/devices/updateAppstart`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: jsonBody
+                }).then(response => {
+                    if (!response.ok) {
+                        throw new Error('Fehler beim Speichern der Gerätedetails');
+                    }
+                    alert('Änderungen gespeichert!');
+                    document.getElementById('appstartOverlay').style.display = 'none';
+                }).catch(error => {
+                    alert('Fehler: ' + error.message);
+                });
+
+                return false;
+            }
+
 
             async function editFeatures() {
                 try {
@@ -552,10 +630,30 @@
             }
 
             function deleteDevice() {
-                if (confirm('Möchten Sie dieses Gerät wirklich löschen?')) {
-                    alert('Gerät wurde gelöscht');
+                if (confirm(`Möchten Sie das Gerät ${currentDeviceId} von ${currentUserName} wirklich löschen?`)) {
+                    fetch(`/devices/${currentDeviceId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(response => {
+                        if (!response.ok) {
+                            throw new Error('Fehler beim Löschen des Geräts');
+                        }
+                        console.log(document.getElementById('deviceDetailsOverlay'));
+                        document.getElementById('deviceOverlay').style.display = 'none';
+
+                        // Entferne den gelöschten Datensatz aus der Liste
+                        const deviceRow = document.getElementById(`device-${currentDeviceId}`);
+                        if (deviceRow) {
+                            deviceRow.remove();
+                        }
+                    }).catch(error => {
+                        alert('Fehler: ' + error.message);
+                    });
                 }
             }
+
 
             function randomizeMessage() {
                 const randomTitles = ["Willkommen", "Wichtige Nachricht", "Update verfügbar"];
@@ -567,9 +665,6 @@
                 // Setze die Felder im Formular
                 $("input[name='pushFormTitle']").val(randomTitle);
                 $("input[name='pushFormBody']").val(randomBody);
-            }
-
-            function saveAppstartdata() {
             }
 
         </script>
