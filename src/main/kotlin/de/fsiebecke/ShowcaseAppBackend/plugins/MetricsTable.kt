@@ -22,7 +22,7 @@ object MetricsTable : Table("showcase_metrics") {
     val subsequentAppStartsTotal = integer("subsequent_app_starts_total").nullable()
     val lastCommitIp = varchar("last_commit_ip", 255).nullable()
 
-    private fun InsertStatement<*>.fromModel(data: MetricsModel) {
+    private fun InsertStatement<*>.fromModel(data: MetricsDataModel) {
         this[fullAppStartsThisMonth] = data.fullAppStartsSinceLastCommit
         this[fullAppStartsMsThisMonth] = data.fullAppStartsMsSinceLastCommit
         this[fullAppStartsLastMonth] = data.fullAppStartsSinceLastCommit
@@ -37,7 +37,7 @@ object MetricsTable : Table("showcase_metrics") {
         this[subsequentAppStartsMsTotal] = data.subsequentAppStartsMsSinceLastCommit
     }
 
-    private fun UpdateStatement.fromModel(data: MetricsModel) {
+    private fun UpdateStatement.fromModel(data: MetricsDataModel) {
         this[fullAppStartsThisMonth] = data.fullAppStartsSinceLastCommit
         this[fullAppStartsMsThisMonth] = data.fullAppStartsMsSinceLastCommit
         this[fullAppStartsLastMonth] = data.fullAppStartsSinceLastCommit
@@ -52,7 +52,7 @@ object MetricsTable : Table("showcase_metrics") {
         this[subsequentAppStartsMsTotal] = data.subsequentAppStartsMsSinceLastCommit
     }
 
-    fun updateOrInsert(devId: String, data: MetricsModel, clientIp: String): Int {
+    fun updateOrInsert(devId: String, data: MetricsDataModel, clientIp: String): Int {
         val row = selectAll().where { deviceId eq devId }.singleOrNull()
         // Berechne die neuen Werte, falls ein Datensatz existiert
         val newFullAppStartsThisMonth =
@@ -97,8 +97,8 @@ object MetricsTable : Table("showcase_metrics") {
             1 // Rückgabe von 1, um anzuzeigen, dass ein Eintrag eingefügt wurde
         }
     }
-    fun toModel(row: ResultRow): MetricsModel {
-        return MetricsModel(
+    fun toModel(row: ResultRow): MetricsDataModel {
+        return MetricsDataModel(
             dataModelVersion = CURRENT_DATA_MODEL_VERSION,
             deviceId = row[deviceId],
             fullAppStartsMsSinceLastCommit = 0,

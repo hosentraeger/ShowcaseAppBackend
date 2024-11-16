@@ -17,11 +17,11 @@ class AddSpecialRecordToDb {
 
             // Lösche die Tabellen vor jedem Test
             transaction(database) {
-                SchemaUtils.drop(DeviceDataTable) // Hier DeviceData verwenden
+                SchemaUtils.drop(DeviceTable) // Hier DeviceData verwenden
             }
             // Erstelle die Tabellen
             transaction(database) {
-                SchemaUtils.create(DeviceDataTable) // Hier DeviceData verwenden
+                SchemaUtils.create(DeviceTable) // Hier DeviceData verwenden
             }
         }
 
@@ -41,7 +41,7 @@ class AddSpecialRecordToDb {
             val database = DatabaseFactory.getDatabase()
 
             transaction(database) {
-                DeviceDataTable.insert {
+                DeviceTable.insert {
                     it[deviceId] = "3ec55ba9-cabb-4358-91c9-5c29a2f58a86"
                     it[appVersion] = 1
                     it[appId] = 7

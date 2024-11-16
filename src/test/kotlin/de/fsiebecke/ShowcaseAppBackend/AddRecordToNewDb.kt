@@ -18,11 +18,11 @@ class AddRecordToNewDb {
 
         // Lösche die Tabellen vor jedem Test
         transaction(database) {
-            SchemaUtils.drop(DeviceDataTable) // Hier DeviceData verwenden
+            SchemaUtils.drop(DeviceTable) // Hier DeviceData verwenden
         }
         // Erstelle die Tabellen
         transaction(database) {
-            SchemaUtils.create(DeviceDataTable) // Hier DeviceData verwenden
+            SchemaUtils.create(DeviceTable) // Hier DeviceData verwenden
             SchemaUtils.create(FeaturesTable)
             SchemaUtils.create(MetricsTable)
             SchemaUtils.create(AppstartTable)
@@ -38,21 +38,21 @@ class AddRecordToNewDb {
         val database = DatabaseFactory.getDatabase()
         val json = createJson() // Verwende das erstellte Json mit den richtigen Serialisierern
         testData.forEach { jsonString ->
-            val dataModel = json.decodeFromString<DeviceDataModel>(jsonString)
-            val appstartModel = json.decodeFromString<AppstartModel>(jsonString)
-            val metricsModel = json.decodeFromString<MetricsModel>(jsonString)
-            val featuresModel = json.decodeFromString<FeaturesModel>(jsonString)
+            val deviceDataModel = json.decodeFromString<DeviceDataModel>(jsonString)
+            val appstartDataModel = json.decodeFromString<AppstartDataModel>(jsonString)
+            val metricsDataModel = json.decodeFromString<MetricsDataModel>(jsonString)
+            val featuresDataModel = json.decodeFromString<FeaturesDataModel>(jsonString)
             transaction(database) {
-                DeviceDataTable.updateOrInsert(dataModel, "0.0.0.42")
+                DeviceTable.updateOrInsert(deviceDataModel, "0.0.0.42")
             }
             transaction(database) {
-                AppstartTable.updateOrInsert(dataModel.deviceId, appstartModel, "0.0.0.42")
+                AppstartTable.updateOrInsert(deviceDataModel.deviceId, appstartDataModel, "0.0.0.42")
             }
             transaction(database) {
-                MetricsTable.updateOrInsert(dataModel.deviceId, metricsModel, "0.0.0.42")
+                MetricsTable.updateOrInsert(deviceDataModel.deviceId, metricsDataModel, "0.0.0.42")
             }
             transaction(database) {
-                FeaturesTable.updateOrInsert(dataModel.deviceId, featuresModel, "0.0.0.42")
+                FeaturesTable.updateOrInsert(deviceDataModel.deviceId, featuresDataModel, "0.0.0.42")
             }
         }
         // Überprüfe, ob die Datensätze erfolgreich erstellt wurden

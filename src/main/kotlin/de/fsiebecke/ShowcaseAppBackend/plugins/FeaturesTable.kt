@@ -21,7 +21,7 @@ object FeaturesTable : Table("showcase_features") {
     val requireTermsConditionsAgreement = bool("require_terms_conditions_agreement").nullable()
     val sendDynatraceBeacons = bool("send_dynatrace_beacons").nullable()
 
-    private fun InsertStatement<*>.fromModel(data: FeaturesModel) {
+    private fun InsertStatement<*>.fromModel(data: FeaturesDataModel) {
         this[incomeExpenseWidgetVariant] = data.incomeExpenseWidgetVariant
         this[offerAroundTheProperty] = data.offerAroundTheProperty
         this[offerClick2Credit] = data.offerClick2Credit
@@ -32,7 +32,7 @@ object FeaturesTable : Table("showcase_features") {
         this[sendDynatraceBeacons] = data.sendDynatraceBeacons
     }
 
-    private fun UpdateStatement.fromModel(data: FeaturesModel) {
+    private fun UpdateStatement.fromModel(data: FeaturesDataModel) {
         this[incomeExpenseWidgetVariant] = data.incomeExpenseWidgetVariant
         this[offerAroundTheProperty] = data.offerAroundTheProperty
         this[offerClick2Credit] = data.offerClick2Credit
@@ -43,9 +43,9 @@ object FeaturesTable : Table("showcase_features") {
         this[sendDynatraceBeacons] = data.sendDynatraceBeacons
     }
 
-    fun updateOrInsert(data: FeaturesModel, clientIp: String): Int {
+    fun updateOrInsert(devId: String, data: FeaturesDataModel, clientIp: String): Int {
         // Update-Versuch
-        val updatedRows = update({ deviceId eq data.deviceId }) {
+        val updatedRows = update({ deviceId eq devId }) {
             it[lastCommitIp] = clientIp
             it.fromModel(data)
         }
@@ -54,15 +54,15 @@ object FeaturesTable : Table("showcase_features") {
         } else {
             insert {
                 it[lastCommitIp] = clientIp
-                it[deviceId] = data.deviceId
+                it[deviceId] = devId
                 it.fromModel(data) // für InsertStatement
             }
             1 // Rückgabe von 1, um anzuzeigen, dass ein Eintrag eingefügt wurde
         }
     }
 
-    fun toModel(row: ResultRow): FeaturesModel {
-        return FeaturesModel(
+    fun toModel(row: ResultRow): FeaturesDataModel {
+        return FeaturesDataModel(
             dataModelVersion = CURRENT_DATA_MODEL_VERSION,
             deviceId = row[deviceId],
             incomeExpenseWidgetVariant = row[incomeExpenseWidgetVariant],

@@ -19,11 +19,11 @@ class AddMultipleEntriesToDb {
 
         // Lösche die Tabellen vor jedem Test
         transaction(database) {
-            SchemaUtils.drop(DeviceDataTable) // Hier DeviceData verwenden
+            SchemaUtils.drop(DeviceTable) // Hier DeviceData verwenden
         }
         // Erstelle die Tabellen
         transaction(database) {
-            SchemaUtils.create(DeviceDataTable) // Hier DeviceData verwenden
+            SchemaUtils.create(DeviceTable) // Hier DeviceData verwenden
         }
     }
 
@@ -40,7 +40,7 @@ class AddMultipleEntriesToDb {
 
         transaction(database) {
             for (i in 1..numberOfEntries) {
-                DeviceDataTable.insert {
+                DeviceTable.insert {
                     it[deviceId] = "device$i" // Erstelle verschiedene deviceId
                     it[appVersion] = i // Version mit laufender Nummer
                     it[appId] = i // app_id basierend auf i
@@ -52,7 +52,7 @@ class AddMultipleEntriesToDb {
 
         // Überprüfe, ob die Datensätze erfolgreich erstellt wurden
         transaction(database) {
-            val count = DeviceDataTable.selectAll().count().toInt()
+            val count = DeviceTable.selectAll().count().toInt()
             assertEquals(numberOfEntries, count) // Überprüfe, ob die erwartete Anzahl von Datensätzen existiert
         }
     }
