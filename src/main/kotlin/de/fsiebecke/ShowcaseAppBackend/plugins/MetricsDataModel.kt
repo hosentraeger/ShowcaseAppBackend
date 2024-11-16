@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 
 @Serializable
-data class MetricsModel(
+data class MetricsDataModel(
     val dataModelVersion: Int,
     val deviceId: String,
     @Contextual val lastLoginDateTime: LocalDateTime? = null,

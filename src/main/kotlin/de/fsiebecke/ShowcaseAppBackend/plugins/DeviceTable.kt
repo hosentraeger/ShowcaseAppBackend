@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.statements.InsertStatement
 import org.jetbrains.exposed.sql.statements.UpdateStatement
 
 // Tabelle für DeviceData
-object DeviceDataTable : Table("showcase_device_data") {
+object DeviceTable : Table("showcase_device_data") {
     val deviceId = varchar("deviceId", 255).uniqueIndex() // Primary Key
     val accountSorting = enumerationByName("account_sorting", 50, AccountSortingEnum::class).nullable()
     val autoUpdateBalance = bool("auto_update_balance").nullable()
